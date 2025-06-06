@@ -63,7 +63,7 @@
       $query_kategori = mysqli_query($koneksi, "SELECT DISTINCT kategori from produk");
       while ($row_kategori = mysqli_fetch_assoc($query_kategori)){
       ?>
-            <button class="btn btn-outline-dark kategori-btn" onclick="filterWisata('<?= $row_kategori['kategori'] ?>')"><?= $row_kategori['kategori'] ?></button>
+            <button class="btn btn-outline-dark kategori-btn" onclick="filterProduk('<?= $row_kategori['kategori'] ?>')"><?= $row_kategori['kategori'] ?></button>
             <?php } ?>
             <div class="pagination">
                 <button id="prevBtn" onclick="prevPage()"><</button>
@@ -138,7 +138,7 @@ while ($row = mysqli_fetch_assoc($query_produk)) {
 
     <!-- ajax kategori -->
 <script>
-  function filterWisata(kategori) {
+  function filterProduk(kategori) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', 'filter_kategori_produk.php?kategori=' + kategori, true);
     xhr.onload = function() {
@@ -151,7 +151,7 @@ while ($row = mysqli_fetch_assoc($query_produk)) {
 
   // Untuk memuat data wisata saat halaman pertama kali dimuat
   window.onload = function() {
-    filterWisata('');
+    filterProduk('');
   };
 </script>
 
