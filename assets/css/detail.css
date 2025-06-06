@@ -1,0 +1,163 @@
+.kotak-detail{
+    width: 79%;
+    margin: auto;
+    margin-top: 60px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* border: 1px solid black; */
+    margin-bottom: 20px;
+}
+.main-image {
+    width: 100%;
+    max-width: 470px;
+    height: 260px;
+    margin-bottom: 10px;
+    display: block;
+}
+.thumbnail-container {
+    width: 470px;
+    /* border: 1px solid black; */
+    display: flex;
+    gap: 10px;
+}
+.thumbnail {
+    width: 80px;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+.thumbnail:hover {
+    border: 2px solid #b9b9b9;
+}
+.button-container {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    width: 470px;
+}
+.button {
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
+.add-to-cart {
+    background-color: orange;
+    color: white;
+}
+.buy-now {
+    background-color: green;
+    color: white;
+}
+.product-details {
+    width: 470px;
+    margin-top: 10px;
+}
+.product-details .tokonya{
+/* border: 1px solid black; */
+display: flex;
+justify-content: space-between;
+padding: 10px;
+margin: 3px 0px;
+border-bottom: 1px solid rgb(180, 178, 178);
+border-top: 1px solid rgb(180, 178, 178);
+}
+.product-details  .deskripsi-produk{
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 16px;
+  text-align: justify;
+  padding: 5px;
+}
+.product-details .tokonya .nama-tokonya{
+    display: flex;
+/* border: 1px solid black; */
+align-items: center;
+gap: 5px;
+}
+.product-details .tokonya .nama-tokonya .img-radius{
+    border-radius: 50%;
+/* border: 1px solid black; */
+overflow: hidden;
+}
+.product-details .tokonya .nama-tokonya img{
+    width: 50px;
+    }
+.product-details .tokonya .nama-tokonya img{
+    width: 50px;
+    }
+.product-details .tokonya .nama-tokonya .isi{
+    line-height: 14px;
+    }
+.product-details .tokonya .nama-tokonya .isi p{
+    font-size: 14px;
+    }
+.product-details .tokonya .nama-tokonya .isi p strong{
+    font-size: 17px;
+    }
+
+.product-details .tokonya .profilnya{
+/* border: 1px solid black; */
+display: flex;
+align-items: center;
+flex-direction: column;
+}
+
+.product-details p {
+    margin: 5px 0;
+}
+
+.kotak-detail .kotak-komen{
+    border: 1px solid rgb(245, 245, 245);
+    width: 100%;
+    border-radius: 10px;
+    padding: 3px;
+    margin-bottom: 3px;
+
+}
+.kotak-komen .komen{
+    display: flex;
+    gap: 5px;
+    /* flex-direction: row; */
+}
+.kotak-detail .komen .img img{
+    width: 40px
+}
+.komen .text p{
+    font-size: 14px;
+}
+
+@media (max-width: 767px) {
+    /* produk */
+    /* search */
+    .kotak-detail {
+        padding: 0px;
+      width: 100%;
+        margin-top: 46px;
+        margin-bottom: 100px;
+    
+      }
+      .main-image {
+        max-width: 100%;
+        margin-top: 10px;
+    }
+    .thumbnail-container {
+        width: 100%;
+        /* border: 1px solid black; */
+
+    }
+
+    .button-container {
+        width: 98%;
+    }
+
+    .product-details {
+        width: 98%;
+        margin-top: 10px;
+    }
+    .komen .text p{
+        font-size: 14px;
+    }
+
+    }

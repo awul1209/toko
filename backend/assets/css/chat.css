@@ -1,0 +1,243 @@
+.kotak-chat-admin{
+    margin: auto;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+    background-color: #f7f7f7;
+    padding: 20px 10px 5px;
+}
+.kotak-chat-admin .btn{
+width: 10%;
+}
+/* Link kembali */
+.kotak-chat-admin a {
+    text-decoration: none;
+    color: #3498DB;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+/* Chat container */
+.kotak-chat-admin .chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Chat messages area */
+.kotak-chat-admin .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #333;
+    background-color: #e5e5e5;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Chat input area */
+.kotak-chat-admin .chat-input {
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+.chat-input #image-name{
+    margin-bottom: 10px;
+    margin-left: 10px;
+}
+
+/* Input text */
+.kotak-chat-admin #message {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    font-size: 14px;
+    margin-right: 10px;
+    outline: none;
+}
+
+.kotak-chat-admin #message:focus {
+    border-color: #3498DB;
+}
+
+/* Input file */
+.kotak-chat-admin #image {
+    display: none;
+}
+
+/* Tombol kirim */
+.kotak-chat-admin button {
+    background-color: #3498DB;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.kotak-chat-admin button:hover {
+    background-color: #0056b3;
+}
+
+/* Label untuk file input */
+.kotak-chat-admin #image + label {
+    font-size: 14px;
+    color: #67696b;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+
+.kotak-chat-admin input[type="text"]{
+    width: 90%;
+}
+
+/* Label untuk input file (tombol gambar) */
+.kotak-chat-admin input[type="file"] + label {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #464a4e;
+    cursor: pointer;
+    margin-left: 10px;
+    margin-right: 10px;
+    border: 1px solid #3498DB;
+    padding: 5px;
+    border-radius: 5px;
+    width: 89%;
+}
+
+
+
+/* Container utama */
+.kotak-chat-user {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 600px;
+    margin: auto;
+}
+
+/* Container pesan */
+.chat-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    height: 400px;
+    overflow-y: auto;
+}
+
+/* Style untuk pesan */
+.chat-message {
+    display: flex;
+    max-width: 80%;
+}
+
+/* Pesan dari user (di kanan, biru) */
+.chat-message.user {
+    justify-content: flex-start;
+    align-self: flex-start;
+}
+
+.chat-message.user .message-box {
+    background-color: #3498DB;
+    color: white;
+    border-radius: 10px 10px 0 10px;
+    padding: 10px;
+    max-width: 98%;
+    text-align: left;
+}
+
+/* Pesan dari seller (di kiri, hijau) */
+.chat-message.seller {
+    justify-content: flex-end;
+    align-self: flex-end;
+}
+
+.chat-message.seller .message-box {
+    background-color: #3498DB;
+    color: white;
+    border-radius: 10px 10px 10px 0;
+    padding: 5px;
+    max-width: 98%;
+    text-align: left;
+}
+
+/* Nama pengirim */
+.sender-name {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+/* Gambar dalam pesan */
+.chat-message img {
+    max-width: 100px;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+@media (max-width: 767px) {
+    .kotak-chat-admin{
+        width: 100%;
+padding: 20px 2px 5px;
+    }
+    .kotak-chat-admin input[type="text"]{
+        width: 90%;
+    }
+    .kotak-chat-admin input[type="text"]{
+        margin: auto;
+        width: 98%;
+        border-radius: 5px;
+    }
+    .kotak-chat-admin .chat-input button{
+        /* border: 2px solid black; */
+        display: block;
+        border-radius: 5px;
+        margin:5px auto;
+        padding: 7px 20px;
+    }
+    /* Style untuk pesan */
+.chat-message {
+    display: flex;
+    max-width: 90%;
+}
+       /* Nama pengirim */
+.sender-name {
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+/* Gambar dalam pesan */
+.chat-message img {
+    max-width: 80px;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+.chat-message p {
+    font-size: 12px;
+}
+
+.chat-message.seller .message-box {
+    background-color: #3498DB;
+    color: white;
+    border-radius: 10px 10px 10px 0;
+    padding: 2px 4px;
+    max-width: 98%;
+    text-align: left;
+}
+
+.chat-message.user .message-box {
+    padding: 2px 4px;
+}
+    }
+

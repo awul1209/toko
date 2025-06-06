@@ -1,0 +1,32 @@
+.kotak-tr{
+    width: 79%;
+    margin: auto;
+    /* border: 1px solid black; */
+    height: auto;
+    margin-top: 69px;
+}
+.kotak-tr .card{
+    padding: 20px;
+}
+label { display: block; margin: 10px 0 5px; }
+select, .input{ width: 100%; padding: 10px; margin-bottom: 10px; }
+.hidden { display: none; }
+
+@media (max-width: 767px) {
+    .kotak-tr{
+        width: 100%;
+        padding: 2px;
+        margin-top: 55px;
+    }
+    .kotak-tr .card{
+        padding: 5px;
+        width: 100%;
+    }
+    .kotak-tr .card h2{
+        margin-top: 10px;
+    font-size: 18px;
+    }
+    .kotak-tr .card img{
+width: 100%;
+    }
+}

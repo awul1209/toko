@@ -1,0 +1,121 @@
+.kotak-dashboard{
+    width: 79%;
+    /* border: 1px solid black; */
+    margin: auto;
+    margin-top: 70px;
+    margin-bottom: 100px;
+}
+.user-card {
+    background: #fff;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    text-align: center;
+}
+.user-card h4 {
+font-size: 18px;
+}
+.user-card p{
+font-size: 14px;
+}
+
+.user-avatar {
+    width: 100px;
+    height: 100px;
+    border: 3px solid #3498DB;
+    display: block;
+    margin: 0 auto;
+}
+
+.table th {
+    background-color: #3498DB;
+    color: white;
+}
+
+.table td {
+    vertical-align: middle;
+}
+.kotak-dashboard .pesanan-user h3{
+    text-align: center;
+    font-size: 18px;
+}
+.kotak-dashboard .histori-user h3{
+    margin-top: 10px;
+    text-align: center;
+    font-size: 18px;
+}
+.kotak-dashboard .pesanan-user,.histori-user table tr td,th{
+    text-align: center;
+    font-size: 14px;
+}
+
+.kotak-dashboard .badge {
+    font-size: 12px;
+    padding: 6px 7px;
+}
+
+.stars {
+    display: flex;
+    direction: row;
+    justify-content: center;
+}
+.star {
+    width: 30px;
+    height: 30px;
+    background-image: url('../img/icon_form/starkosong.png'); /* Gambar bintang kosong */
+    background-size: cover;
+    cursor: pointer;
+    margin-bottom: 10px;
+    margin-top: -15px;
+}
+.star.selected {
+    background-image: url('../img/icon_form/star.png'); /* Gambar bintang penuh */
+}
+.kotak-proses-rating p{
+    font-size: 18px;
+}
+.star-rating {
+    width: 30px;
+    height: 30px;
+    background-image: url('../img/icon_form/star.png'); /* Gambar bintang kosong */
+    background-size: cover;
+    cursor: pointer;
+    margin-bottom: 10px;
+    margin-top: -15px;
+}
+
+
+@media (max-width: 767px) {
+    .kotak-dashboard{
+        width: 100%;
+        padding: 2px 5px;
+    }
+    .user-card h4 {
+        font-size: 16px;
+        }
+        .user-card p{
+        font-size: 12px;
+        }
+    .kotak-dashboard .pesanan-user h3{
+        text-align: center;
+        font-size: 16px;
+    }
+    .kotak-dashboard .pesanan-user table tr td,th{
+        text-align: center;
+        font-size: 12px;
+        font-weight: lighter;
+    }
+    .kotak-dashboard .histori-user h3{
+        text-align: center;
+        font-size: 16px;
+    }
+    .kotak-dashboard .histori-user table tr td,th{
+        text-align: center;
+        font-size: 12px;
+    }
+
+    .pesanan-user .badge {
+        font-size: 12px;
+        padding: 5px 5px;
+    }
+ 
+}

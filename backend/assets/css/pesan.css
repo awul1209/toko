@@ -1,0 +1,70 @@
+.kotak-pesan{
+    margin: auto;
+    width: 79%;
+    margin-top: 15px;
+    /* border: 1px solid black; */
+    height: 71vh;
+}
+.kotak-pesan h3{
+    margin-bottom: 10px;
+    font-size: 22px;
+}
+.kotak-pesan .pesan{
+    width: 400px;
+    display: flex;
+    border: 1px solid rgb(226, 226, 226);
+    border-radius: 10px;
+    justify-content: space-between;
+    padding: 3px;
+    margin: 4px auto;
+}
+.kotak-pesan .pesan .img{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+}
+.kotak-pesan .pesan .img img{
+    width: 50px;
+    border-radius: 50%;
+}
+.kotak-pesan .pesan .button{
+    /* border: 1px solid black; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.kotak-pesan .pesan .button .badge{
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+@media (max-width: 420px) {
+    .kotak-pesan{
+        margin: auto;
+        width: 100%;
+        margin-top: 10px;
+        /* border: 1px solid black; */
+        height: 71vh;
+    }
+    .kotak-pesan h3{
+        margin-bottom: 10px;
+        font-size: 18px;
+    }
+    .kotak-pesan .pesan{
+        margin: auto;
+        width: 340px;
+        padding: 3px 6px;
+    }
+    .kotak-pesan .pesan .img{
+gap: 9px;
+    }
+    .kotak-pesan .pesan p{
+       font-size: 16px;
+       font-weight: bold;
+    }
+    .kotak-pesan .pesan .button .badge{
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    }

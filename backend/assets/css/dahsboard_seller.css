@@ -1,0 +1,58 @@
+
+
+/* dashboard */
+.kotak-seller{
+    display: flex;
+    flex-direction:row;
+    flex-wrap: wrap;
+    gap: 3px;
+    /* border: 1px solid black; */
+    margin-top: 20px;
+
+}
+.kotak-seller .card-seller{
+    /* border: 1px solid black; */
+    width: 33%;
+}
+.kotak-seller .card-seller h3,p{
+    color: #3498DB;
+}
+.kotak-seller .card-seller h3{
+    font-size: 26px;
+}
+.kotak-seller .card-seller p{
+    font-size: 16px;
+}
+
+/* end-dashboard */
+
+/* pesanan */
+.pesanan h3{
+    font-size: 22px;
+}
+.pesanan tr th,td{
+    vertical-align: middle;
+    text-align: center;
+    font-size: 14px;
+}
+/* end pesanan */
+
+@media (max-width: 768px) {
+
+}
+
+/* Media query khusus untuk layar dengan lebar maksimal 480px (Smartphone) */
+@media (max-width: 480px) {
+    /* kotak seller */
+    .kotak-seller{
+        display: flex;
+        flex-direction:row;
+        flex-wrap: wrap;
+        justify-content: center;
+        /* border: 1px solid black; */
+        margin-bottom: 50px;
+    }
+    .kotak-seller .card-seller{
+        width: 100%;
+    }
+}

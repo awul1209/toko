@@ -1,0 +1,23 @@
+.kotak-tentang-kami{
+    margin-top: 60px;
+    /* border: 1px solid black; */
+    height: 76vh;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+.kotak-tentang-kami .isi{
+    width: 60%;
+    height: auto;
+    /* border: 1px solid black; */
+}
+
+@media (max-width: 420px) {
+    .kotak-tentang-kami{
+        height: auto;
+    }
+    .kotak-tentang-kami .isi{
+        width: 100%;
+        margin-bottom: 30px;
+    }
+  }

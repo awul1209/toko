@@ -1,0 +1,27 @@
+.pertanyaan-rating{
+    margin: auto;
+    text-align: center;
+    border: 1px solid rgb(202, 194, 194);
+    margin-bottom: 10px;
+    border-radius: 15px;
+}
+.kotak-form-ulasan{
+    /* border: 1px solid black; */
+    display: flex;
+    gap: 10px;
+}
+.kotak-form-ulasan .kotak-input-ulasan{
+    width: 50%;
+}
+
+
+@media (max-width: 420px) {
+.kotak-form-ulasan{
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0px;
+}
+.kotak-form-ulasan .kotak-input-ulasan{
+    width: 100%;
+}
+  }

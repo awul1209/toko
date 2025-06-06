@@ -1,0 +1,85 @@
+/* produk */
+/* search */
+.search {
+  width: 71%;
+    margin: auto;
+    margin-top: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* border: 1px solid black; */
+  }
+  .cari{
+   width: 90%;
+    /* margin-left: 25px; */
+  }
+  /* end search */
+
+  .produk-kotak{
+    /* margin-top: 10px; */
+    padding-top: 15px;
+    border-top: 1px solid rgb(226, 226, 226);
+      /* border: 1px solid black; */
+      width: 71%;
+      margin: auto;
+      display: flex;
+      /* flex-direction: row; */
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+    .produk-kotak .card{
+      border: none;
+        width: 14rem;
+        /* text-align: center; */
+        transition: 0.3s;
+        /* margin: 9px; */
+    
+    }
+
+    .produk-kotak .card-title{
+margin-top: -7px;
+    }
+  /* end produk */
+
+
+
+  /* Menyesuaikan ukuran gambar kategori dan produk untuk mobile */
+@media (max-width: 767px) {
+/* produk */
+/* search */
+.search {
+  width: 100%;
+    margin-top: 75px;
+
+  }
+  .cari{
+   width: 90%;
+    /* margin-left: 25px; */
+  }
+  /* end search */
+
+  .produk-kotak{
+    /* padding-top: 5px; */
+      /* border: 1px solid black; */
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      /* gap: 5px; */
+      margin-bottom: 30px;
+      /* align-items: center; */
+      margin: 0px;
+      padding-top: 5px;
+    }
+    .produk-kotak .produk-card{
+      margin: 0px;
+    width: 48%;
+    }
+    #h2{
+      font-size: 18px;
+      font-weight: bold;
+    }
+  /* end produk */
+}

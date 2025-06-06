@@ -1,0 +1,31 @@
+.kotak-form-user{
+    /* border: 1px solid black; */
+    display: flex;
+    gap: 10px;
+}
+.kotak-form-user .kotak-input-user{
+    width: 50%;
+}
+.kotak-form-user .kotak-input-user #passwordTambah{
+    height: 40px;
+}
+.kotak-form-user .kotak-input-user #button-addon2{
+    height: 40px;
+}
+.kotak-form-user .kotak-input-user #select{
+   margin-top: -37px;
+}
+.kotak-form-user .kotak-input-user #label-level{
+   margin-top: -100px;
+}
+
+@media (max-width: 420px) {
+.kotak-form-user{
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0px;
+}
+.kotak-form-user .kotak-input-user{
+    width: 100%;
+}
+  }

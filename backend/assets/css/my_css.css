@@ -1,0 +1,65 @@
+
+#side {
+  height: 100vh;
+}
+th {
+  text-align: center;
+  vertical-align: middle;
+}
+/* chart */
+.kotak-chart{
+  margin-top: 30px;
+  /* border: 1px solid black; */
+  display: flex;
+  gap: 20px;
+}
+.kotak-chart .transaksi{
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 5px 5px 2px #b8b8b8, -1px -1px 2px #ececec;
+  display: flex;
+  justify-content: center;
+  max-height: 300px;
+  flex: 2;
+}
+.kotak-chart .kategori{
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 5px 5px 2px #b8b8b8, -1px -1px 2px #ececec;
+  display: flex;
+  justify-content: center;
+ 
+  max-height: 300px;
+  flex: 1;
+}
+/* end-chart */
+@media only screen and (max-width: 480px) {
+  #side {
+    height: auto;
+  }
+  .text {
+    display: none;
+  }
+  #sidebar {
+    height: auto;
+  }
+  /* cahrt */
+  .kotak-chart{
+    /* border: 1px solid black; */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.kotak-chart .transaksi{
+    padding: 3px;
+}
+.kotak-chart .kategori{
+  flex: 2;
+    padding: 5px;
+    margin: auto;
+    margin-top: 10px;
+    max-height: 250px;
+    flex: 1;
+}
+  /* end-chart */
+}

@@ -1,0 +1,401 @@
+body{
+  overflow-x: hidden;
+}
+#nav{
+    background-color: #3498DB;
+    color: #ffffff;
+}
+#logo{
+  width: 45px;
+}
+
+/* header slider */
+.container-slide{
+margin-top:75px;
+}
+.container-slide .kotak-slide{
+    width: 70%;
+}
+.carousel-inner img {
+height: 350px;
+object-fit: cover;
+}
+/* end header slider */
+
+
+
+/* kotak-fitur */
+.kotak-fitur{
+    width: 69%;
+    height: 100px;
+    /* border: 1px solid black; */
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    margin-top: 5px;
+}
+.kotak-fitur .fitur{
+    display: grid;
+    place-items: center;
+    flex: 1;
+    height:90px ;
+    background-color: #3498DB;
+}
+.kotak-fitur .fitur img{
+    margin-top: 17px;
+   margin-bottom: 0px;
+}
+.kotak-fitur .fitur p{
+  font-size: 14px;
+    margin-bottom: 17px;
+color:aliceblue
+}
+/* end kotak-fitur */
+
+
+
+
+/* kategori */
+.kotak-kategori{
+    margin: auto;
+    margin-top: 37px;
+    width: 69%;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* border: 1px solid black; */
+    box-sizing: border-box;
+    border-bottom: 1px solid rgb(226, 226, 226);
+}
+.kotak-kategori .kotak-judul{
+/* border: 1px solid black; */
+height: 15px;
+        }
+
+.kotak-kategori .kotak-judul p{
+font-size: 16px;
+    }
+
+.kategori{
+    display: flex;
+    /* overflow-x: auto; Membuat kategori dapat digeser secara horizontal */
+    padding: 0px 10px; /* Menambahkan padding atas dan bawah */
+    -webkit-overflow-scrolling: touch; /* Agar lebih mulus di perangkat mobile */
+    align-items: center;
+}
+.kategori-btn {
+    background-color: transparent; /* Warna tombol */
+    border: none;
+    color: white;
+    padding: 3px 4px;
+    margin-right: 10px; /* Memberikan jarak antar tombol */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 15px;
+    color: black;
+    cursor: pointer;
+    border-bottom: 1px solid #9c51df;
+    border-radius: 25px; /* Membuat tombol memiliki sudut melengkung */
+  }
+
+
+.pagination button {
+    padding: 1px 4px;
+    font-size: 14px;
+    margin: 5px;
+    cursor: pointer;
+    border: 1px solid #afb5b9;
+    background-color: white;
+    transition: all 0.3s;
+}
+
+.pagination button:hover {
+    background-color: #9c51df;
+    color: white;
+}
+
+.hidden {
+    display: none;
+}
+/* end kategori */
+
+
+/* produk */
+.kotak-produk{
+  padding: 10px 6px 0px 6px;
+  border-bottom: 2px solid #d1cfcf;
+  border-radius: 15px;
+    /* border: 1px solid black; */
+    width: 71%;
+    margin-top: 5px;
+  }
+  .kotak-produk .judul-produk{
+    display: none;
+  }
+  .kotak-produk .produk{
+    padding: 0px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 8px;
+  }
+.kotak-produk .card {
+  border: none;
+    width: 15rem;
+    /* text-align: center; */
+    transition: 0.3s;
+    /* margin: 9px; */
+}
+.card:hover {
+    transform: scale(1.02);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+.kotak-produk .card a{
+  color: #555;
+text-decoration: none;
+}
+.card-title {
+  margin-top: 7px;
+  margin-bottom: 0px;
+    font-size: 16px;
+    /* font-weight: bold; */
+}
+.card-text {
+  margin-top: 0px;
+    font-size: 16px;
+    color: #555;
+}
+.card-title-toko {
+  font-size: 16px;
+margin-bottom: 5px;
+}
+/* end produk */
+
+
+
+
+/* iklan */
+.kotak-iklan{
+  /* border: 1px solid black; */
+  width: 71%;
+  margin-top: 25px;
+  height: 220px;
+  display: flex;
+  justify-content: space-between;
+  padding: 0px;
+}
+.kotak-iklan .iklan1{
+  width: 49%;
+  /* border: 1px solid rgb(175, 47, 47); */
+}
+.kotak-iklan .iklan2{
+  width: 49%;
+  /* border: 1px solid rgb(52, 18, 206); */
+}
+.kotak-iklan img{
+  width: 100%;
+  height: 100%;
+}
+/* end iklan */
+
+/* best */
+.kotak-best{
+  /* border: 1px solid black; */
+  width: 71%;
+  margin-top: 35px;
+  display: flex;
+  flex-direction: column;
+  padding: 0px;
+  margin-bottom: 100px;
+}
+.kotak-best .judul-best{
+  /* border: 1px solid black; */
+  height: 25px;
+}
+.kotak-best .judul-best p{
+  font-size: 16px;
+}
+.kotak-best .best{
+  border-top: 1px solid rgb(226, 226, 226);
+  padding-top: 10px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+.kotak-best .card{
+  transition: 0.3s;
+  width: 14.6rem;
+  border: none;
+}
+
+.discount-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: red;
+  color: white;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+.kotak-best .card a{
+  color: #555;
+text-decoration: none;
+}
+.kotak-best .card .card-text-toko{
+  margin-top: 15px;
+margin-bottom: 0px;
+}
+.kotak-best .card .card-title{
+  margin-top: 0px;
+}
+/* end best */
+
+
+/* Menyesuaikan ukuran gambar kategori dan produk untuk mobile */
+@media (max-width: 767px) {
+    /* header slider */
+    #logo{
+      width: 35px;
+    }
+
+.container-slide{
+width: 100%;
+margin-top: 56px;
+}
+.container-slide .kotak-slide{
+    width: 100%;
+    }
+.category-card, .card {
+width: 45%;
+margin-bottom: 15px;
+}
+.carousel-inner img {
+height: auto;
+}
+/* end header slider */
+
+/* kotak-fitur */
+.kotak-fitur{
+display: none;
+}
+/* end fitur */
+
+/* kategori */
+.kotak-kategori{
+    width: 100%;
+    margin-bottom: 7px;
+}
+.kategori{
+    /* margin-top: 5px; */
+    padding: 5px;
+    width: 100%;
+    justify-content:center ;
+
+}
+.kotak-kategori .kotak-judul{
+display: none;
+}
+.kategori::-webkit-scrollbar {
+    height: 8px; /* Ukuran scrollbar */
+  }
+  
+  .kategori::-webkit-scrollbar-thumb {
+    background-color: #888; /* Warna scrollbar */
+    border-radius: 5px;
+  }
+  
+  .kategori::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+  }
+  .kategori-btn {
+    border: 1px solid rgb(0, 0, 0);
+    padding: 2px 5px;
+    margin-right: 10px; /* Memberikan jarak antar tombol */
+    border-radius: 2px;
+  }
+  /* end kategori */
+
+  /* produk */
+  .kotak-produk{
+    width: 100%;
+    /* border: 1px solid black; */
+    padding: 0px;
+  }
+  .kotak-produk .judul-produk{
+    display: block;
+    margin-top: 7px;
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+  .kotak-produk .judul-produk h6{
+font-size: 18px;
+margin-bottom: 5px;
+  }
+  .kotak-produk .produk{
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 3px;
+  }
+.kotak-produk .card {
+    width: 48%;
+}
+.kotak-produk .produk .card h6{
+font-size: 16px;
+  }
+.kotak-produk .produk .card p{
+font-size: 14px;
+  }
+  /* end produk */
+
+
+
+  /* iklan */
+.kotak-iklan{
+  /* border: 1px solid black; */
+  width: 100%;
+  margin-top: 25px;
+  padding: 5px;
+  margin-bottom: 10px;
+  gap: 5px;
+  height: 110px;
+}
+.kotak-iklan .iklan1{
+  width: 100%;
+  height: 100px;
+  /* border: 1px solid rgb(175, 47, 47); */
+}
+.kotak-iklan .iklan2{
+  width: 100%;
+  height: 100px;
+  /* border: 1px solid rgb(52, 18, 206); */
+}
+/* end iklan */
+
+
+/* best */
+.kotak-best{
+  width: 100%;
+  /* border: 1px solid black; */
+  padding: 0px;
+}
+.kotak-best .best{
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+.kotak-best .card {
+  width: 48%;
+}
+.kotak-best .judul-best{
+  text-align: center;
+}
+/* end best */
+}
