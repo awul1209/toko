@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 06 Jun 2025 pada 08.58
+-- Waktu pembuatan: 07 Jun 2025 pada 06.38
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.0.30
 
@@ -100,6 +100,7 @@ CREATE TABLE `pesanan` (
   `briva` varchar(255) NOT NULL,
   `keterangan` text NOT NULL,
   `admin` varchar(255) NOT NULL,
+  `estimasi` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -108,10 +109,11 @@ CREATE TABLE `pesanan` (
 -- Dumping data untuk tabel `pesanan`
 --
 
-INSERT INTO `pesanan` (`id`, `user_id`, `produk_id`, `quantity`, `price`, `status`, `tgl_pesanan`, `ukuran`, `warna`, `rasa`, `metode`, `briva`, `keterangan`, `admin`, `created_at`, `updated_at`) VALUES
-(8, 1, 12, 2, 10000.00, 'selesai', '2025-06-05', '-', '-', 'Coklat', 'COD', '', '', 'setuju', '2025-06-05 09:28:17', '2025-06-05 09:28:17'),
-(9, 1, 8, 2, 10000.00, 'selesai', '2025-06-05', '-', '-', 'Manis', 'Cod', '', '', 'setuju', '2025-06-05 09:34:48', '2025-06-05 09:34:48'),
-(10, 1, 1, 1, 50000.00, 'selesai', '2025-06-05', 'L', 'Merah', '-', 'COD', '', '', 'setuju', '2025-06-05 09:41:56', '2025-06-05 09:41:56');
+INSERT INTO `pesanan` (`id`, `user_id`, `produk_id`, `quantity`, `price`, `status`, `tgl_pesanan`, `ukuran`, `warna`, `rasa`, `metode`, `briva`, `keterangan`, `admin`, `estimasi`, `created_at`, `updated_at`) VALUES
+(8, 1, 12, 2, 10000.00, 'selesai', '2025-06-05', '-', '-', 'Coklat', 'COD', '', '', 'setuju', '0', '2025-06-05 09:28:17', '2025-06-05 09:28:17'),
+(9, 1, 8, 2, 10000.00, 'selesai', '2025-06-05', '-', '-', 'Manis', 'Cod', '', '', 'setuju', '0', '2025-06-05 09:34:48', '2025-06-05 09:34:48'),
+(10, 1, 1, 1, 50000.00, 'selesai', '2025-06-05', 'L', 'Merah', '-', 'COD', '', '', 'setuju', '0', '2025-06-05 09:41:56', '2025-06-05 09:41:56'),
+(12, 7, 6, 3, 30000.00, 'dikirim', '2025-06-07', '-', '-', 'Manis', 'COD', '', '', 'setuju', '2025-06-08', '2025-06-07 02:14:11', '2025-06-07 02:14:11');
 
 -- --------------------------------------------------------
 
@@ -193,6 +195,7 @@ CREATE TABLE `seller` (
   `nama_toko` varchar(250) NOT NULL,
   `deskripsi_toko` text DEFAULT NULL,
   `gambar` text NOT NULL,
+  `latlng` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -200,10 +203,10 @@ CREATE TABLE `seller` (
 -- Dumping data untuk tabel `seller`
 --
 
-INSERT INTO `seller` (`id`, `nama`, `email`, `password`, `kontak`, `alamat`, `nama_toko`, `deskripsi_toko`, `gambar`, `created_at`) VALUES
-(1, 'Awul', 'awul@gmail.com', '$2y$10$4j0ggEqMRCnphQJmA/g/SOqxl96Nb9DbLLH6X0EP6RAcqLWcyPJ3G', '04395035289', 'saronggi desa kermata', 'awulstore', 'toko peralatan komputer dan handphone lengkap', '67c84e54b74b1.png', '2025-02-19 02:36:35'),
-(2, 'muhammad riyas', 'riyas@gmail.com', '$2y$10$xu.BCUu/RA4tPsAy1aDUUuJJ/TZLDKbBEaZPIG6kHS8Bu1iIjbDZu', '09876543', 'jalan raya gapura paberasan', 'toko kembar berkah', 'menjual aneka perlengkapan kantor dan sekolah (atk)', '67c84e9ba341a.png', '2025-02-27 08:39:37'),
-(3, 'Azizah', 'azizah@gmail.com', '$2y$10$WawIdYZgmUkFw6T1uJr95e6TYJEeSroCWO8nMxm3DHXTiNupInspu', '0345350', 'Jalan Raya Lenteng No. ABC gang 12 dusun salosa', 'Azizah Store', 'Toko Peralatan Alat Alat Memasak Lengkap dan Murah', '67c543845fcf2.png', '2025-03-03 05:25:06');
+INSERT INTO `seller` (`id`, `nama`, `email`, `password`, `kontak`, `alamat`, `nama_toko`, `deskripsi_toko`, `gambar`, `latlng`, `created_at`) VALUES
+(1, 'Awul', 'awul@gmail.com', '$2y$10$4j0ggEqMRCnphQJmA/g/SOqxl96Nb9DbLLH6X0EP6RAcqLWcyPJ3G', '04395035289', 'saronggi desa kermata', 'awulstore', 'toko peralatan komputer dan handphone lengkap', '67c84e54b74b1.png', '-7.000634086461189, 113.86884544661459', '2025-02-19 02:36:35'),
+(2, 'muhammad riyas', 'riyas@gmail.com', '$2y$10$xu.BCUu/RA4tPsAy1aDUUuJJ/TZLDKbBEaZPIG6kHS8Bu1iIjbDZu', '09876543', 'jalan raya gapura paberasan', 'toko kembar berkah', 'menjual aneka perlengkapan kantor dan sekolah (atk)', '67c84e9ba341a.png', '', '2025-02-27 08:39:37'),
+(3, 'Azizah', 'azizah@gmail.com', '$2y$10$WawIdYZgmUkFw6T1uJr95e6TYJEeSroCWO8nMxm3DHXTiNupInspu', '0345350', 'Jalan Raya Lenteng No. ABC gang 12 dusun salosa', 'Azizah Store', 'Toko Peralatan Alat Alat Memasak Lengkap dan Murah', '67c543845fcf2.png', '', '2025-03-03 05:25:06');
 
 -- --------------------------------------------------------
 
@@ -223,7 +226,7 @@ CREATE TABLE `tentang_kami` (
 --
 
 INSERT INTO `tentang_kami` (`id`, `deskripsi`, `created_at`, `updated_at`) VALUES
-(2, '<div><strong>Selamat datang di Aplikasi Local Shop Sumenep&nbsp;<br></strong><br></div><ul><li>Aplikasi Website ini menyediakan produk lokal yang ada disumenep.</li><li>Daftar dan login, setelah itu update profil pribadi tambah alamat untuk mempermudah pembelian</li><li>Kami juga menghadirkan fitur chating untuk memudah kan anatara pelanggan dan penjual dalam melakukan transaksi.</li><li>Jangan lupa untuk memberikan rating dan ulasan pada aplikasi ini. Umpan balik Anda sangat berarti bagi kami untuk terus meningkatkan kualitas layanan dan fitur yang ada.</li></ul><div>Selamat berbelanja, semoga pengalaman Anda menyenangkan!</div>', '2025-02-16 03:22:48', '2025-02-16 03:22:48');
+(2, '<div><strong>Selamat datang di Aplikasi Local Shop Sumenep&nbsp;<br></strong><br></div><ul><li>Aplikasi Website ini menyediakan produk lokal yang ada disumenep.</li><li>Daftar dan login, setelah itu update profil pribadi tambah alamat untuk mempermudah pembelian</li><li>Kami juga menghadirkan fitur chating untuk memudah kan anatara pelanggan dan penjual dalam melakukan transaksi.</li><li>Jangan lupa untuk memberikan rating dan ulasan pada aplikasi ini. Umpan balik Anda sangat berarti bagi kami untuk terus meningkatkan kualitas layanan dan fitur yang ada.</li></ul><div><strong>Selamat berbelanja, semoga pengalaman Anda menyenangkan!</strong></div>', '2025-02-16 03:22:48', '2025-02-16 03:22:48');
 
 -- --------------------------------------------------------
 
@@ -298,7 +301,7 @@ INSERT INTO `user` (`id`, `nama`, `email`, `password`, `role`, `kontak`, `alamat
 (1, 'Ayyubb', 'ayyub@gmail.com', '$2y$10$LwmhqPFk5EoFQz2Z9gdkrOBCeJC.0W783IKCtDvhg8XCsnHiPeSiG', 'user', 720520012, 'Jalan Raya Gapura Paberasan Sumenep Dusun Salosa RT/12 RW/06', '2025-02-19 00:02:14', '2025-02-19 00:02:14'),
 (4, 'admin', 'admin@gmail.com', '$2y$10$AglQndIQL62FGy3pto.LMOUvrz1.uygg5lTtfozz2hjCIxllHS9Au', 'admin', 8237427, '', '2025-02-19 03:32:41', '2025-02-19 03:32:41'),
 (5, 'tolak wulandari', 'wulan@gmail.com', '$2y$10$ARudbRWHeXBS.MLC6hHZvevAu5CaNJJONKeL/7.UtsfuXiwLaxWOm', 'user', 8773654, 'Jalan Raya Saronggi Dusun Kermata RT/12 RW/11', '2025-02-27 08:29:10', '2025-02-27 08:29:10'),
-(7, 'Sucia', 'suci@gmail.com', '$2y$10$cyO0W1Aj4BPd/VHaQ1fP9eTHehJwbQn/VI7tb7L05Gt9X494j16Gu', 'user', 39845398, 'Kangean Kepulauan Sumenep Desa Tanjung ', '2025-03-03 00:40:49', '2025-03-03 00:40:49'),
+(7, 'Sucia', 'suci@gmail.com', '$2y$10$cyO0W1Aj4BPd/VHaQ1fP9eTHehJwbQn/VI7tb7L05Gt9X494j16Gu', 'user', 39845398, 'Paberasan, Sumenep, Jawa Timur, Jawa, 69417, Indonesia\r\n', '2025-03-03 00:40:49', '2025-03-03 00:40:49'),
 (8, 'linda', 'linda@gmail.com', '$2y$10$5ePjwbCaJY5TDuBD0GIbr.DN01gEKhOJRxlmgo0//pmSgP0FgfT/2', 'user', 0, '', '2025-04-30 04:55:43', '2025-04-30 04:55:43');
 
 --
@@ -391,7 +394,7 @@ ALTER TABLE `keranjang`
 -- AUTO_INCREMENT untuk tabel `pesanan`
 --
 ALTER TABLE `pesanan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT untuk tabel `produk`
