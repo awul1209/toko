@@ -62,9 +62,6 @@ $tahun = date("Y", $timestamppp);
 
 
   <style>
-    body{
-      over
-    }
     trix-toolbar [data-trix-button-group="file-tools"] {
       display: none;
     }

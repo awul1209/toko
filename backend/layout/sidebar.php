@@ -21,7 +21,7 @@
                     <a  class="nav-link"
                         style="<?= ($page == 'admin-pesanan') ? 'background-color: #eaeaea; border-radius:2px; border-left: 5px solid black;' : '' ?>; color: #3498DB"
                         href="?page=admin-pesanan">
-                        <i style="font-size: 1.2rem; margin-right:5px; color: #3498DB;" class="bi bi-file-person"></i>
+                        <i style="font-size: 1.2rem; margin-right:5px; color: #3498DB;" class="bi bi-cart-plus"></i>
                         Pesanan Masuk
                     </a>
                 </li>
@@ -37,7 +37,7 @@
                     <a  class="nav-link"
                         style="<?= ($page == 'data-seller' || $page == 'add-seller' || $page == 'edit-seller') ? 'background-color: #eaeaea; border-radius:2px; border-left: 5px solid black;' : '' ?>; color: #3498DB"
                         href="?page=data-seller">
-                        <i style="font-size: 1.2rem; margin-right:5px; color: #3498DB;" class="bi bi-person-badge"></i>
+                        <i style="font-size: 1.2rem; margin-right:5px; color: #3498DB;" class="bi bi-person-lines-fill"></i>
                         Penjual
                     </a>
                 </li>

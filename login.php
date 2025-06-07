@@ -99,7 +99,7 @@ if (isset($_POST['login'])) {
             $_SESSION['ses_nama'] = $row['nama'];
             $_SESSION['ses_email'] = $row['email'];
             $_SESSION['ses_created_at'] = $row['created_at'];
-            $_SESSION['ses_role'] =  $row['role'];
+            $_SESSION['ses_role'] =  'penjual';
 
             echo "<script>
                 Swal.fire({

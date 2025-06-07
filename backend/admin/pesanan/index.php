@@ -228,9 +228,15 @@ if (isset($_POST['pembatalan'])) {
 
 // proses kirim
 if (isset($_POST['kirim'])) {
+  // Tentukan format tanggal yang diinginkan (Tahun-Bulan-Hari)
+$formatTanggal = 'Y-m-d';
+
+// Gunakan strtotime untuk menambahkan 1 hari ke tanggal "sekarang"
+$estimasiHariSelanjutnya = date($formatTanggal, strtotime('+1 day'));
     $id = $_POST['id_pesanan'];
     $update = mysqli_query($koneksi, "UPDATE pesanan SET
-    status='dikirim'
+    status='dikirim',
+    estimasi='$estimasiHariSelanjutnya' 
     WHERE id='$id'");
     if ($update) {
         echo "<script>

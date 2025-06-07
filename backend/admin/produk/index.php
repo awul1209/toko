@@ -21,11 +21,11 @@
                         <th class="text-center">Kategori</th>
                         <th class="text-center">Harga</th>
                         <th class="text-center">Stock</th>
-                        <th class="text-center">Ukuran</th>
+                        <!-- <th class="text-center">Ukuran</th>
                         <th class="text-center">Warna</th>
-                        <th class="text-center">Rasa</th>
+                        <th class="text-center">Rasa</th> -->
                         <th class="text-center">Pembayaran</th>
-                        <th class="text-center">Briva</th>
+                        <!-- <th class="text-center">Briva</th> -->
                         <th class="text-center">Diskon</th>
                         <th class="text-center">Deskripsi</th>
                         <th class="text-center">Gambar</th>
@@ -73,7 +73,7 @@
                             <td class="text-center">
                                 <?php echo $data['stock']; ?>
                             </td>
-                            <td class="text-center">
+                            <!-- <td class="text-center">
                                 <?php echo $data['ukuran']; ?>
                             </td>
                             <td class="text-center">
@@ -81,13 +81,13 @@
                             </td>
                             <td class="text-center">
                                 <?php echo $data['rasa']; ?>
-                            </td>
+                            </td> -->
                             <td class="text-center">
                                 <?php echo $data['metode']; ?>
                             </td>
-                            <td class="text-center">
+                            <!-- <td class="text-center">
                                 <?php echo $data['briva']; ?>
-                            </td>
+                            </td> -->
                             <td class="text-center">
                                 <?php echo $data['diskon']; ?>
                             </td>

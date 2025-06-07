@@ -1,3 +1,11 @@
+    <!-- leaflet -->
+         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
+
+    <!-- end leaflet -->
 <?php
 $query=mysqli_query($koneksi,"SELECT * FROM user WHERE role='user' AND id='$s_id'");
 $data=mysqli_fetch_assoc($query);
@@ -32,6 +40,7 @@ $data=mysqli_fetch_assoc($query);
                             <th>Metode</th>
                             <th>Toko</th>
                             <th>Status</th>
+                            <th>Lacak</th>
                         </tr>
                     </thead>
                     <tbody id="realtime_pesanan_user">
@@ -253,6 +262,133 @@ $data=mysqli_fetch_assoc($query);
         });
     }
 </script>
+  <script src="https://cdn.jsdelivr.net/npm/Leaflet-MovingMaker@0.0.1/MovingMarker.min.js"></script>
+<script>
+// Deklarasikan variabel di scope yang lebih tinggi
+let map;
+let currentStatus = ''; // Variabel untuk menyimpan status pesanan
+
+// Fungsi bantuan untuk membuat marker statis
+function createMarker(coords, popupText) {
+    return L.marker(coords).bindPopup(popupText);
+}
+
+// Definisikan ikon untuk kurir
+const deliveryIcon = L.icon({
+    // PERBAIKAN: Gunakan path absolut & format PNG direkomendasikan
+    iconUrl: 'assets/img/konten/deli.png', // Ganti 'marketplace' jika perlu & ganti ke .png
+    iconSize: [60, 60],
+    iconAnchor: [40, 40], 
+});
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Caching elemen DOM
+    const modalElement = document.getElementById('modal_lacak');
+    const modalInstance = new bootstrap.Modal(modalElement);
+    const statusTextElement = document.getElementById('status_pesanan_text');
+    const estimasiTextElement = document.getElementById('estimasi_pesanan_text');
+    const idTokoInput = document.getElementById('id_toko_lacak');
+    const idUserInput = document.getElementById('id_user');
+    const mapDiv = document.getElementById('map');
+    
+    const statusMessages = {
+        pending: '<h2 class="mb-4">Pesanan Anda sedang dibuat</h2>',
+        dikirim: '<h2 class="mb-4">Pesanan Anda sedang dalam pengiriman</h2>'
+    };
+
+    // Event listener untuk klik tombol lacak
+    document.body.addEventListener('click', function(event) {
+        if (event.target && event.target.classList.contains('btn_lacak')) {
+            const idToko = event.target.getAttribute('data-id');
+            const estimasiPesanan = event.target.getAttribute('data-estimasi');
+            // Simpan status pesanan saat ini di variabel agar bisa diakses nanti
+            currentStatus = event.target.getAttribute('data-status'); 
+
+            idTokoInput.value = idToko;
+            statusTextElement.innerHTML = statusMessages[currentStatus] || `<h2 class="mb-4">Status: ${currentStatus}</h2>`;
+            estimasiTextElement.innerHTML=`<h5>Estimasi Pesanan Sampai : ${estimasiPesanan}</h5>`;
+            modalInstance.show();
+        }
+    });
+
+    // Event listener untuk modal
+    modalElement.addEventListener('shown.bs.modal', async function () {
+        if (map) { map.remove(); }
+        mapDiv.innerHTML = `<div class='alert alert-info'>Memuat data lokasi...</div>`;
+
+        try {
+            // (Semua kode fetch data Anda tetap sama dan sudah benar)
+            const idToko = idTokoInput.value;
+            const sellerResponse = await fetch(`/marketplace/management_page/get_seller_location.php?id_toko=${idToko}`);
+            const dataSeller = await sellerResponse.json();
+            if(dataSeller.error) throw new Error(dataSeller.error);
+
+            const idUser = idUserInput.value;
+            const userResponse = await fetch(`/marketplace/management_page/get_user_address.php?id_user=${idUser}`);
+            const dataUser = await userResponse.json();
+            if(dataUser.error) throw new Error(dataUser.error);
+            
+            const userAddress = dataUser.address;
+            const geocodeUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(userAddress)}&format=json&limit=1`;
+            const geocodeResponse = await fetch(geocodeUrl);
+            const geoData = await geocodeResponse.json();
+            if (!geoData || geoData.length === 0) throw new Error(`Tidak dapat menemukan koordinat untuk alamat: "${userAddress}".`);
+            
+            mapDiv.innerHTML = "";
+
+            const userCoords = [parseFloat(geoData[0].lat), parseFloat(geoData[0].lon)];
+            const sellerCoords = dataSeller.latlng.split(',').map(Number);
+            
+            map = L.map('map');
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+            map.invalidateSize();
+
+            // === INTI PERUBAHAN LOGIKA ADA DI SINI ===
+            const routingControl = L.Routing.control({
+                waypoints: [ L.latLng(sellerCoords[0], sellerCoords[1]), L.latLng(userCoords[0], userCoords[1]) ],
+                routeWhileDragging: false, addWaypoints: false, draggableWaypoints: false,
+                fitSelectedRoutes: true, show: false,
+                // PENTING: Matikan pembuatan marker bawaan dari library agar tidak konflik
+                createMarker: function() { return null; } 
+                
+            }).on('routesfound', function(e) {
+                // Event ini hanya berjalan jika rute BERHASIL ditemukan
+                const routeLine = e.routes[0].coordinates;
+
+                // 1. Gambar marker statis A dan B kustom kita
+                createMarker(sellerCoords, '<b>Lokasi Toko</b>').addTo(map);
+                createMarker(userCoords, `<b>Alamat Tujuan</b><br>${userAddress}`).addTo(map);
+
+                // 2. Jika status 'dikirim', gambar juga marker yang bergerak
+                if (currentStatus === 'dikirim') {
+                    L.Marker.movingMarker(routeLine, 20000, { // durasi 20 detik
+                        autostart: true,
+                        loop: true,
+                        icon: deliveryIcon
+                    }).addTo(map);
+                }
+            }).on('routingerror', function(e) {
+                // Penanganan jika rute gagal ditemukan
+                if (map) { map.remove(); }
+                mapDiv.innerHTML = `<div class='alert alert-warning'>Gagal menghitung rute.</div>`;
+            });
+
+            // Tambahkan routing control yang sudah diatur ke peta
+            routingControl.addTo(map);
+
+        } catch (error) {
+            console.error('Terjadi kesalahan:', error);
+            mapDiv.innerHTML = `<div class='alert alert-danger'>${error.message}</div>`;
+        }
+    });
+});
+</script>
+
+
+
+
+
 
 
 <?php
@@ -309,15 +445,7 @@ if (isset($_POST['komen'])) {
     $produk_id = $row['produk_id'];
     $rating = $_POST['rating_1'];
     $comment = $_POST['comment'];
-    // $query_ulasan=mysqli_query($koneksi,"select * from ulasan where user_id='$s_id' and produk_id='$produk_id'");
-    // if(mysqli_num_rows($query_ulasan) >= 1){
-    //     $insert=mysqli_query($koneksi,"UPDATE ulasan set
-    //     comment='$comment',
-    //     rating='$rating'
-    //     where user_id='$s_id' and produk_id='$produk_id'
-    //     "
-    // );
-    // }else{
+
         $insert = mysqli_query($koneksi, "INSERT INTO ulasan (user_id,produk_id,comment,rating,transaksi_id) VALUES ('$s_id','$produk_id','$comment','$rating','$tr_id') ");
  
     if ($insert) {
@@ -329,3 +457,4 @@ if (isset($_POST['komen'])) {
             })</script>";
     }
 }
+?>

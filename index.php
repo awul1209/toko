@@ -1,6 +1,7 @@
 <?php
+
 include 'koneksi.php';
-error_reporting(0);
+// error_reporting(0);
 session_start();
 if (isset($_SESSION['ses_nama'])) {
     $s_id = $_SESSION['ses_id'];
@@ -11,6 +12,8 @@ if (isset($_SESSION['ses_nama'])) {
     $s_created = $_SESSION['ses_created_at'];
   }
 $page = $_GET['page'];
+
+
 ?>
 
 <!DOCTYPE html>
@@ -19,6 +22,10 @@ $page = $_GET['page'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marketplace Penjualan</title>
+
+
+
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
         <!-- Link ke Bootstrap Icons CDN -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -39,6 +46,12 @@ $page = $_GET['page'];
     <!-- alert -->
     <script src="assets/js/alert.js"></script>
 </head>
+<style>
+  #map{
+    width: 100%;
+    height: 300px;
+  }
+</style>
 <body>
 
     <header>
@@ -93,6 +106,8 @@ $page = $_GET['page'];
     </div>
   </div>
   <!-- end modal login -->
+
+ 
 
   <script>
      function togglePassword() {
@@ -173,5 +188,28 @@ if (isset($_POST['login'])) {
 }
 ?>
 
+<div class="modal fade" id="modal_lacak" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+  <div class="modal-dialog modal-lg"> <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Lacak Pesanan Anda</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        
+        <div id="status_pesanan_text" class="mb-1 text-center"></div>
+        <div id="estimasi_pesanan_text" class="mb-3 text-center"></div>
+
+        <input type="hidden" id="id_toko_lacak">
+        <input type="hidden" id="id_user" value="<?= $s_id ?>">
+        
+        <div id="map"></div>
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 

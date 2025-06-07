@@ -27,7 +27,7 @@ $totall=mysqli_fetch_assoc($total);
                     </div>
                     <!-- Right: Image -->
                     <div>
-                        <img src="assets/img/icon_action/order.png" alt="Pesanan" style="width: 60px; height: auto;"/>
+                        <img src="assets/img/icon_action/psm.png" alt="Pesanan" style="width: 60px; height: auto;"/>
                     </div>
                 </div>
             </div>
@@ -54,7 +54,7 @@ $totall=mysqli_fetch_assoc($total);
                     </div>
                     <!-- Right: Image -->
                     <div>
-                        <img src="assets/img/icon_action/transaksi.png" alt="Transaksi" style="width: 60px; height: auto;"/>
+                        <img src="assets/img/icon_action/trh.png" alt="Transaksi" style="width: 60px; height: auto;"/>
                     </div>
                 </div>
             </div>
@@ -81,7 +81,7 @@ $totall=mysqli_fetch_assoc($total);
                     </div>
                     <!-- Right: Image -->
                     <div>
-                        <img src="assets/img/icon_action/pendapatan.png" alt="Transaksi" style="width: 60px; height: auto;"/>
+                        <img src="assets/img/icon_action/pen.png" alt="Transaksi" style="width: 60px; height: auto;"/>
                     </div>
                 </div>
             </div>
@@ -246,44 +246,65 @@ $totall=mysqli_fetch_assoc($total);
     });
 </script>
 
+<?php
+// Asumsi $koneksi dan $ses_id sudah tersedia dari file Anda
+
+// 1. Siapkan query untuk mengambil data secara dinamis
+$query_kategori = "SELECT kategori, COUNT(id) AS jumlah_produk 
+                   FROM produk 
+                   WHERE seller_id = '$ses_id' 
+                   GROUP BY kategori";
+
+$hasil_query = mysqli_query($koneksi, $query_kategori);
+
+// 2. Olah data hasil query menjadi array untuk chart
+$labels_kategori = [];
+$data_jumlah = [];
+while ($row = mysqli_fetch_assoc($hasil_query)) {
+    $labels_kategori[] = $row['kategori'];
+    $data_jumlah[] = $row['jumlah_produk'];
+}
+
+?>
+
 <script>
-    // let tahunSekarang = new Date().getFullYear();
-    const kategori = document.getElementById('kategori');
-    new Chart(kategori, {
-        type: 'pie',
-        data: {
-            labels: ['Fashion', 'Makanan', 'Sembako', 'Kerajinan'],
-            datasets: [{
-                label: '',
-                data: [<?php
-                        $sql1 = mysqli_query($koneksi, "SELECT kategori FROM produk WHERE kategori = 'Fashion' AND seller_id='$ses_id'");
-                        echo mysqli_num_rows($sql1);
-                        ?>,
-                    <?php
-                    $sql2 = mysqli_query($koneksi, "SELECT kategori FROM produk WHERE kategori = 'Makanan' AND seller_id='$ses_id' ");
-                    echo mysqli_num_rows($sql2);
-                    ?>,
-                    <?php
-                    $sql3 = mysqli_query($koneksi, "SELECT kategori FROM produk WHERE kategori = 'Sembako'   AND seller_id='$ses_id'");
-                    echo mysqli_num_rows($sql3);
-                    ?>,
-                    <?php
-                    $sql4 = mysqli_query($koneksi, "SELECT kategori FROM produk WHERE kategori = 'Kerajinan' AND seller_id='$ses_id' ");
-                    echo mysqli_num_rows($sql4);
-                    ?>,
-                ],
-                backgroundColor: [
-                    'rgb(255, 99, 132)',
-                    '#3498DB',
-                    'rgb(255, 205, 86)',
-                    'rgb(75, 192, 192)'
-                ],
-            }]
-        },
-        options: {
-            scales: {
+// Ambil elemen canvas
+const kategoriCanvas = document.getElementById('kategori');
+
+// 3. Buat chart baru dengan data dinamis dari PHP
+new Chart(kategoriCanvas, {
+    type: 'pie',
+    data: {
+        // Gunakan data kategori yang sudah diambil dari database
+        labels: <?php echo json_encode($labels_kategori); ?>,
+        datasets: [{
+            label: 'Jumlah Produk per Kategori',
+            // Gunakan data jumlah produk yang sesuai
+            data: <?php echo json_encode($data_jumlah); ?>,
+            backgroundColor: [
+                'rgb(255, 99, 132)',
+                '#3498DB',
+                'rgb(255, 205, 86)',
+                'rgb(75, 192, 192)',
+                '#9B59B6', // Tambahkan warna lain untuk kategori
+                '#F1C40F', // yang mungkin lebih dari 4
+                '#E74C3C',
+                '#2ECC71'
+            ],
+            hoverOffset: 4
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Persentase Produk Berdasarkan Kategori'
             }
         }
-        
-    });
+    }
+});
 </script>

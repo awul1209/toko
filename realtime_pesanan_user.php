@@ -4,7 +4,7 @@ $s_id = $_GET['s_id'];
 
 // Perbaiki query untuk memfilter status pesanan dengan benar
 $pesanan = mysqli_query($koneksi, "
-SELECT pesanan.id AS id_pesanan, produk.id AS id_produk, seller.id AS id_toko, seller.nama_toko,seller.kontak, produk.gambar1, seller.nama_toko, produk.produk AS produk, pesanan.quantity, pesanan.ukuran, pesanan.warna, pesanan.rasa, pesanan.metode, pesanan.price, pesanan.tgl_pesanan, pesanan.status,pesanan.keterangan,pesanan.briva FROM pesanan JOIN produk ON produk.id = pesanan.produk_id JOIN user ON user.id = pesanan.user_id JOIN seller ON seller.id = produk.seller_id WHERE pesanan.user_id = '$s_id' AND pesanan.status = 'pending' OR pesanan.status = 'di proses' OR pesanan.status='batal' OR pesanan.status='di batalkan' OR pesanan.status='ditolak'  OR pesanan.status='dikirim'
+SELECT pesanan.id AS id_pesanan,pesanan.estimasi, produk.id AS id_produk, seller.id AS id_toko, seller.nama_toko,seller.kontak, produk.gambar1, seller.nama_toko, produk.produk AS produk, pesanan.quantity, pesanan.ukuran, pesanan.warna, pesanan.rasa, pesanan.metode, pesanan.price, pesanan.tgl_pesanan, pesanan.status,pesanan.keterangan,pesanan.briva FROM pesanan JOIN produk ON produk.id = pesanan.produk_id JOIN user ON user.id = pesanan.user_id JOIN seller ON seller.id = produk.seller_id WHERE pesanan.user_id = '$s_id' AND pesanan.status = 'pending' OR pesanan.status = 'di proses' OR pesanan.status='batal' OR pesanan.status='di batalkan' OR pesanan.status='ditolak'  OR pesanan.status='dikirim'
 ");
 ?>
 
@@ -88,6 +88,9 @@ while ($row_pesanan = mysqli_fetch_assoc($pesanan)) {
             </form>
             <?php } ?>
             <a class="badge border-0 text-decoration-none mt-1" style="background-color:#8a38e4;" href="?page=chat&seller_id=<?= $row_pesanan['id_toko'] ?>">Chat</a>
+        </td>
+        <td>
+            <button type="button" class="btn btn-primary btn_lacak" data-id="<?= $row_pesanan['id_toko'] ?>" data-status="<?= $row_pesanan['status'] ?>" data-estimasi="<?= $row_pesanan['estimasi'] ?>">Lacak</button>
         </td>
     </tr>
 <?php
