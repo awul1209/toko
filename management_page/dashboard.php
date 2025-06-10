@@ -263,27 +263,34 @@ $data=mysqli_fetch_assoc($query);
     }
 </script>
   <script src="https://cdn.jsdelivr.net/npm/Leaflet-MovingMaker@0.0.1/MovingMarker.min.js"></script>
-<script>
-// Deklarasikan variabel di scope yang lebih tinggi
-let map;
-let currentStatus = ''; // Variabel untuk menyimpan status pesanan
-
-// Fungsi bantuan untuk membuat marker statis
-function createMarker(coords, popupText) {
-    return L.marker(coords).bindPopup(popupText);
-}
-
-// Definisikan ikon untuk kurir
-const deliveryIcon = L.icon({
-    // PERBAIKAN: Gunakan path absolut & format PNG direkomendasikan
+  <script>
+      // Deklarasikan variabel di scope yang lebih tinggi
+      let map;
+      let currentStatus = '';
+      
+      // Fungsi bantuan untuk membuat marker statis
+      function createMarker(coords, popupText) {
+          return L.marker(coords).bindPopup(popupText);
+        }
+        
+        // === LANGKAH 1: Definisikan DUA ikon untuk kurir ===
+        // Ikon untuk pergerakan ke arah KANAN (default)
+        const deliveryIcon = L.icon({
     iconUrl: 'assets/img/konten/deli.png', // Ganti 'marketplace' jika perlu & ganti ke .png
-    iconSize: [60, 60],
-    iconAnchor: [40, 40], 
+    iconSize: [50, 50],
+    iconAnchor: [25, 25], 
+});
+
+// Ikon untuk pergerakan ke arah KIRI (gambar cermin)
+const deliveryIconKiri = L.icon({
+    iconUrl: 'assets/img/konten/deli_kanan.png', // Ganti nama file jika perlu
+    iconSize: [50, 50],
+    iconAnchor: [25, 25], 
 });
 
 
 document.addEventListener('DOMContentLoaded', function () {
-    // Caching elemen DOM
+    // (Caching elemen DOM dan event listener tombol 'lacak' tetap sama)
     const modalElement = document.getElementById('modal_lacak');
     const modalInstance = new bootstrap.Modal(modalElement);
     const statusTextElement = document.getElementById('status_pesanan_text');
@@ -297,14 +304,11 @@ document.addEventListener('DOMContentLoaded', function () {
         dikirim: '<h2 class="mb-4">Pesanan Anda sedang dalam pengiriman</h2>'
     };
 
-    // Event listener untuk klik tombol lacak
     document.body.addEventListener('click', function(event) {
         if (event.target && event.target.classList.contains('btn_lacak')) {
             const idToko = event.target.getAttribute('data-id');
             const estimasiPesanan = event.target.getAttribute('data-estimasi');
-            // Simpan status pesanan saat ini di variabel agar bisa diakses nanti
             currentStatus = event.target.getAttribute('data-status'); 
-
             idTokoInput.value = idToko;
             statusTextElement.innerHTML = statusMessages[currentStatus] || `<h2 class="mb-4">Status: ${currentStatus}</h2>`;
             estimasiTextElement.innerHTML=`<h5>Estimasi Pesanan Sampai : ${estimasiPesanan}</h5>`;
@@ -318,7 +322,7 @@ document.addEventListener('DOMContentLoaded', function () {
         mapDiv.innerHTML = `<div class='alert alert-info'>Memuat data lokasi...</div>`;
 
         try {
-            // (Semua kode fetch data Anda tetap sama dan sudah benar)
+            // (Proses fetch data tidak berubah)
             const idToko = idTokoInput.value;
             const sellerResponse = await fetch(`/marketplace/management_page/get_seller_location.php?id_toko=${idToko}`);
             const dataSeller = await sellerResponse.json();
@@ -336,7 +340,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!geoData || geoData.length === 0) throw new Error(`Tidak dapat menemukan koordinat untuk alamat: "${userAddress}".`);
             
             mapDiv.innerHTML = "";
-
             const userCoords = [parseFloat(geoData[0].lat), parseFloat(geoData[0].lon)];
             const sellerCoords = dataSeller.latlng.split(',').map(Number);
             
@@ -344,37 +347,62 @@ document.addEventListener('DOMContentLoaded', function () {
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
             map.invalidateSize();
 
-            // === INTI PERUBAHAN LOGIKA ADA DI SINI ===
             const routingControl = L.Routing.control({
                 waypoints: [ L.latLng(sellerCoords[0], sellerCoords[1]), L.latLng(userCoords[0], userCoords[1]) ],
-                routeWhileDragging: false, addWaypoints: false, draggableWaypoints: false,
                 fitSelectedRoutes: true, show: false,
-                // PENTING: Matikan pembuatan marker bawaan dari library agar tidak konflik
-                createMarker: function() { return null; } 
-                
+                createMarker: () => null
             }).on('routesfound', function(e) {
-                // Event ini hanya berjalan jika rute BERHASIL ditemukan
                 const routeLine = e.routes[0].coordinates;
+              
+    // === PERBAIKAN: Ganti L.marker dengan kode di bawah ini ===
+    
+    // 1. Buat marker untuk Penjual dengan tooltip permanen
+    L.marker(sellerCoords)
+        .bindTooltip("Lokasi Penjual", { 
+            permanent: true, 
+            direction: 'top', 
+            offset: [0, -20] // Menggeser label sedikit ke atas
+        })
+        .addTo(map);
 
-                // 1. Gambar marker statis A dan B kustom kita
-                createMarker(sellerCoords, '<b>Lokasi Toko</b>').addTo(map);
-                createMarker(userCoords, `<b>Alamat Tujuan</b><br>${userAddress}`).addTo(map);
+    // 2. Buat marker untuk Pembeli dengan tooltip permanen
+    L.marker(userCoords)
+        .bindTooltip("Lokasi Pembeli", { 
+            permanent: true, 
+            direction: 'top', 
+            offset: [0, -20] // Menggeser label sedikit ke atas
+        })
+        .addTo(map);
 
-                // 2. Jika status 'dikirim', gambar juga marker yang bergerak
                 if (currentStatus === 'dikirim') {
-                    L.Marker.movingMarker(routeLine, 20000, { // durasi 20 detik
+                    
+                    // === LOGIKA BARU BERDASARKAN IDE ANDA ===
+                    let selectedIcon;
+                    const userLongitude = userCoords[1];
+                    const sellerLongitude = sellerCoords[1];
+
+                    if (userLongitude < sellerLongitude) {
+                        // Jika longitude pembeli lebih kecil (di KIRI peta), gunakan ikon kiri.
+                        console.log("Arah: Kiri. Menggunakan ikon kiri.");
+                        selectedIcon = deliveryIconKiri;
+                    } else {
+                        // Jika tidak (di KANAN atau lurus vertikal), gunakan ikon kanan default.
+                        console.log("Arah: Kanan. Menggunakan ikon kanan.");
+                        selectedIcon = deliveryIcon;
+                    }
+
+                    // Buat marker bergerak dengan ikon yang sudah dipilih
+                    L.Marker.movingMarker(routeLine, 20000, {
                         autostart: true,
                         loop: true,
-                        icon: deliveryIcon
+                        icon: selectedIcon // <-- Gunakan ikon yang sudah dipilih
                     }).addTo(map);
                 }
             }).on('routingerror', function(e) {
-                // Penanganan jika rute gagal ditemukan
                 if (map) { map.remove(); }
                 mapDiv.innerHTML = `<div class='alert alert-warning'>Gagal menghitung rute.</div>`;
             });
-
-            // Tambahkan routing control yang sudah diatur ke peta
+            
             routingControl.addTo(map);
 
         } catch (error) {

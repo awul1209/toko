@@ -1,7 +1,7 @@
 <?php
 
 include 'koneksi.php';
-// error_reporting(0);
+error_reporting(0);
 session_start();
 if (isset($_SESSION['ses_nama'])) {
     $s_id = $_SESSION['ses_id'];

@@ -3,6 +3,7 @@ session_start();
 
 
 include '../koneksi.php';
+error_reporting(0);
 
 if (isset($_SESSION['ses_id']) == '') {
   header('Location: ./index.php');
@@ -12,7 +13,6 @@ if (isset($_SESSION['ses_id']) == '') {
   $role = $_SESSION['ses_role'];
 } 
 
-// error_reporting(0);
 
 
 $page = $_GET['page'];
