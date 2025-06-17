@@ -1,11 +1,13 @@
+
+  
     <!-- leaflet -->
          <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 
-
     <!-- end leaflet -->
+     
 <?php
 $query=mysqli_query($koneksi,"SELECT * FROM user WHERE role='user' AND id='$s_id'");
 $data=mysqli_fetch_assoc($query);
@@ -24,31 +26,12 @@ $data=mysqli_fetch_assoc($query);
         </div>
 
         <!-- Pesanan Saya -->
-        <div class="pesanan-user mt-4">
-            <h3>Pesanan Saya</h3>
-            <div class="table-responsive">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Gambar</th>
-                            <th>Produk</th>
-                            <th>Tanggal Pesanan</th>
-                            <th>Jumlah</th>
-                            <th>Warna (Ukuran) / Rasa</th>
-                            <th>Total Harga</th>
-                            <th>Metode</th>
-                            <th>Toko</th>
-                            <th>Status</th>
-                            <th>Lacak</th>
-                        </tr>
-                    </thead>
-                    <tbody id="realtime_pesanan_user">
-                        
-                    </tbody>
-                </table>
-            </div>
+<div class="pesanan-user mt-4">
+    <h3 class="mb-3">Pesanan Saya</h3>
+    
+    <div id="realtime_pesanan_user">
         </div>
+</div> 
 
 
 
@@ -166,6 +149,80 @@ $data=mysqli_fetch_assoc($query);
     </div>
   </div>
 </div>
+</div>
+
+<!-- modal bayar -->
+<div class="modal fade" id="modal_bayar" tabindex="-1" aria-labelledby="modalBayarLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalBayarLabel"><i class="bi bi-wallet me-2"></i>Detail Pembayaran</h5>
+            
+          </div>
+        <form action="" method="post">
+          <div class="modal-body">
+            <div class="text-center">
+              <div class="mb-4">
+                <p class="text-muted mb-1">Total Pembayaran</p>
+                <h2 class="fw-bold display-5" id="modalTotalPembayaran">Rp 0</h2>
+              </div>
+              <p class="text-muted">Silakan lakukan pembayaran ke nomor Virtual Account di bawah ini.</p>
+              <div class="bg-light p-3 rounded mt-3 mb-4">
+                <h6 class="text-uppercase text-secondary" style="font-size: 0.8rem;">Nomor Virtual Account</h6>
+                <div class="input-group">
+                  <input type="text" class="form-control form-control-lg text-center fs-4" id="virtualAccountNumber" readonly name="id_pesanan">
+                  <button class="btn btn-outline-secondary" type="button" id="copyButton" title="Salin Nomor VA"><i class="bi bi-copy"></i></button>
+                </div>
+                <div id="copyAlert" class="form-text text-success d-none">Nomor berhasil disalin!</div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+                <button type="button" class="btn btn-secondary"><a href="?page=dashboard" class="text-white text-decoration-none" >Tutup</a></button>
+                <button type="submit" name="bayar" class="btn btn-primary">Saya Sudah Bayar</button>
+            </div>
+        </form>
+        </div>
+      </div>
+    </div>
+
+
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const modalElement = document.getElementById('modal_bayar');
+      if (modalElement) {
+        const myModal = bootstrap.Modal.getOrCreateInstance(modalElement);
+        const inputVirtualAccount = document.getElementById('virtualAccountNumber');
+        const elTotalPembayaran = document.getElementById('modalTotalPembayaran');
+
+        document.body.addEventListener('click', function(event) {
+          const tombolBuka = event.target.closest('.btn-buka-modal');
+          if (tombolBuka) {
+            const nomorVA = tombolBuka.getAttribute('data-va');
+            const totalHarga = tombolBuka.getAttribute('data-total');
+            if (inputVirtualAccount) { inputVirtualAccount.value = nomorVA; }
+            if (elTotalPembayaran && totalHarga) {
+              const formattedTotal = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalHarga);
+              elTotalPembayaran.textContent = formattedTotal;
+            }
+            myModal.show();
+          }
+        });
+
+        const copyButton = document.getElementById('copyButton');
+        const copyAlert = document.getElementById('copyAlert');
+        if (copyButton && inputVirtualAccount) {
+          copyButton.addEventListener('click', () => {
+            navigator.clipboard.writeText(inputVirtualAccount.value).then(() => {
+              copyAlert.classList.remove('d-none');
+              setTimeout(() => { copyAlert.classList.add('d-none'); }, 2000);
+            }).catch(err => { console.error("Gagal menyalin:", err); });
+          });
+        }
+      }
+    });
+    </script>
         
 <script>
     function setRating(star, value, inputId) {
@@ -198,6 +255,37 @@ $data=mysqli_fetch_assoc($query);
       }
     });
   });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  
+  // Dapatkan elemen modalnya sekali saja di luar loop
+  const modalElement = document.getElementById('modal_bayar');
+  const myModal = new bootstrap.Modal(modalElement);
+
+  // Dapatkan input field di dalam modal
+  const inputVirtualAccount = document.getElementById('virtualAccountNumber');
+
+  document.body.addEventListener('click', function(event) {
+    // Kita cari elemen terdekat yang punya class 'btn-buka-modal'
+    const tombolBuka = event.target.closest('.btn-buka-modal');
+
+    // Jika tombol yang diklik (atau parent-nya) adalah tombol pemicu kita
+    if (tombolBuka) {
+      
+      // 1. Ambil nilai dari atribut 'data-va' pada tombol yang diklik
+      const nomorVA = tombolBuka.getAttribute('data-va');
+
+      // 2. Pastikan input field ada, lalu isi nilainya
+      if (inputVirtualAccount) {
+        inputVirtualAccount.value = nomorVA;
+      }
+      
+      // 3. Tampilkan modalnya
+      myModal.show();
+    }
+  });
+});
 </script>
 
 <script>
@@ -263,34 +351,31 @@ $data=mysqli_fetch_assoc($query);
     }
 </script>
   <script src="https://cdn.jsdelivr.net/npm/Leaflet-MovingMaker@0.0.1/MovingMarker.min.js"></script>
-  <script>
-      // Deklarasikan variabel di scope yang lebih tinggi
-      let map;
-      let currentStatus = '';
-      
-      // Fungsi bantuan untuk membuat marker statis
-      function createMarker(coords, popupText) {
-          return L.marker(coords).bindPopup(popupText);
-        }
-        
-        // === LANGKAH 1: Definisikan DUA ikon untuk kurir ===
-        // Ikon untuk pergerakan ke arah KANAN (default)
-        const deliveryIcon = L.icon({
-    iconUrl: 'assets/img/konten/deli.png', // Ganti 'marketplace' jika perlu & ganti ke .png
+  
+ <script>
+// (Deklarasi variabel dan fungsi helper tidak berubah)
+let map;
+let currentStatus = '';
+
+function createMarker(coords, popupText) {
+    return L.marker(coords).bindPopup(popupText);
+}
+
+const deliveryIcon = L.icon({
+    iconUrl: '/marketplace/assets/img/konten/deli.png', // Pastikan path ini absolut
     iconSize: [50, 50],
     iconAnchor: [25, 25], 
 });
 
-// Ikon untuk pergerakan ke arah KIRI (gambar cermin)
 const deliveryIconKiri = L.icon({
-    iconUrl: 'assets/img/konten/deli_kanan.png', // Ganti nama file jika perlu
+    iconUrl: '/marketplace/assets/img/konten/deli_kanan.png', // Pastikan path ini absolut
     iconSize: [50, 50],
     iconAnchor: [25, 25], 
 });
 
 
 document.addEventListener('DOMContentLoaded', function () {
-    // (Caching elemen DOM dan event listener tombol 'lacak' tetap sama)
+    // (Caching elemen DOM dan event listener tombol 'lacak' tidak berubah)
     const modalElement = document.getElementById('modal_lacak');
     const modalInstance = new bootstrap.Modal(modalElement);
     const statusTextElement = document.getElementById('status_pesanan_text');
@@ -347,60 +432,44 @@ document.addEventListener('DOMContentLoaded', function () {
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
             map.invalidateSize();
 
+            // === INTI PERUBAHAN: GANTI ROUTER KE GRAPHHOPPER ===
             const routingControl = L.Routing.control({
                 waypoints: [ L.latLng(sellerCoords[0], sellerCoords[1]), L.latLng(userCoords[0], userCoords[1]) ],
+                
+                // Secara eksplisit definisikan router untuk menggunakan GraphHopper
+                router: L.Routing.graphHopper('9e89601a-4154-49bd-81b0-d9d6023e9bca', {
+                    urlParameters: {
+                        // 'vehicle' bisa: 'car', 'bike', 'foot'
+                        vehicle: 'car'
+                    }
+                }),
+                
+                // Opsi lainnya tetap sama
                 fitSelectedRoutes: true, show: false,
                 createMarker: () => null
             }).on('routesfound', function(e) {
+                // Seluruh logika di sini tidak perlu diubah
                 const routeLine = e.routes[0].coordinates;
-              
-    // === PERBAIKAN: Ganti L.marker dengan kode di bawah ini ===
-    
-    // 1. Buat marker untuk Penjual dengan tooltip permanen
-    L.marker(sellerCoords)
-        .bindTooltip("Lokasi Penjual", { 
-            permanent: true, 
-            direction: 'top', 
-            offset: [0, -20] // Menggeser label sedikit ke atas
-        })
-        .addTo(map);
-
-    // 2. Buat marker untuk Pembeli dengan tooltip permanen
-    L.marker(userCoords)
-        .bindTooltip("Lokasi Pembeli", { 
-            permanent: true, 
-            direction: 'top', 
-            offset: [0, -20] // Menggeser label sedikit ke atas
-        })
-        .addTo(map);
+                L.marker(sellerCoords).bindTooltip("Lokasi Penjual", { permanent: true, direction: 'top', offset: [0, -20] }).addTo(map);
+                L.marker(userCoords).bindTooltip("Lokasi Pembeli", { permanent: true, direction: 'top', offset: [0, -20] }).addTo(map);
 
                 if (currentStatus === 'dikirim') {
-                    
-                    // === LOGIKA BARU BERDASARKAN IDE ANDA ===
                     let selectedIcon;
                     const userLongitude = userCoords[1];
                     const sellerLongitude = sellerCoords[1];
-
                     if (userLongitude < sellerLongitude) {
-                        // Jika longitude pembeli lebih kecil (di KIRI peta), gunakan ikon kiri.
-                        console.log("Arah: Kiri. Menggunakan ikon kiri.");
                         selectedIcon = deliveryIconKiri;
                     } else {
-                        // Jika tidak (di KANAN atau lurus vertikal), gunakan ikon kanan default.
-                        console.log("Arah: Kanan. Menggunakan ikon kanan.");
                         selectedIcon = deliveryIcon;
                     }
-
-                    // Buat marker bergerak dengan ikon yang sudah dipilih
                     L.Marker.movingMarker(routeLine, 20000, {
-                        autostart: true,
-                        loop: true,
-                        icon: selectedIcon // <-- Gunakan ikon yang sudah dipilih
+                        autostart: true, loop: true, icon: selectedIcon
                     }).addTo(map);
                 }
             }).on('routingerror', function(e) {
+                console.error("GraphHopper Routing Error:", e.error);
                 if (map) { map.remove(); }
-                mapDiv.innerHTML = `<div class='alert alert-warning'>Gagal menghitung rute.</div>`;
+                mapDiv.innerHTML = `<div class='alert alert-warning'>Gagal menghitung rute dari GraphHopper.</div>`;
             });
             
             routingControl.addTo(map);
@@ -441,6 +510,18 @@ if (isset($_POST['ubah'])) {
     }
 }
 
+if (isset($_POST['bayar'])) {
+    $id = $_POST['id_pesanan'];
+    $update = mysqli_query($koneksi, "UPDATE pesanan set status='proses' WHERE id='$id'");
+    if ($update) {
+        echo "<script>
+        Swal.fire({title: 'Pesanan Sudah di Proses',text: '',icon: 'success',confirmButtonText: 'OK'
+        }).then((result) => {if (result.value){
+            window.location = '?page=dashboard';
+            }
+            })</script>";
+    }
+}
 if (isset($_POST['batal'])) {
     $id = $_POST['id_batal'];
     $update = mysqli_query($koneksi, "UPDATE pesanan set status='batal' WHERE id='$id'");
@@ -479,6 +560,23 @@ if (isset($_POST['komen'])) {
     if ($insert) {
         echo "<script>
         Swal.fire({title: 'Terima Kasih Atas Ulasannya',text: '',icon: 'success',confirmButtonText: 'OK'
+        }).then((result) => {if (result.value){
+            window.location = '?page=dashboard';
+            }
+            })</script>";
+    }
+}
+
+// pesanan selesai
+if (isset($_POST['selesai'])) {
+    $id = $_POST['id_pesanan'];
+    $update = mysqli_query($koneksi, "UPDATE pesanan SET
+    status='selesai'
+    WHERE id='$id'");
+    mysqli_query($koneksi,"INSERT INTO transaksi (pesanan_id) VALUES ('$id')");
+    if ($update) {
+        echo "<script>
+        Swal.fire({title: 'Pesanan Selesai',text: '',icon: 'success',confirmButtonText: 'OK'
         }).then((result) => {if (result.value){
             window.location = '?page=dashboard';
             }

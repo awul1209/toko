@@ -149,14 +149,6 @@ if($role == 'admin'){
                     <input type="text" value="<?= $data['kontak'] ?>" class="form-control" readonly>
                 </div>
                 <div class="mb-3">
-                <label for="basic-url" class="form-label">Tanggal Pesan</label>
-                <input type="text" value="<?= $data['tgl_p'] ?>" class="form-control" readonly>
-            </div>
-                <div class="mb-3">
-                <label for="basic-url" class="form-label">Tanggal diterima</label>
-                <input type="text" value="<?= $data['created_at'] ?>" class="form-control" readonly>
-            </div>
-                <div class="mb-3">
                 <label for="basic-url" class="form-label">Quantity</label>
                 <input type="text" value="<?= $data['quantity'] ?>" class="form-control" readonly>
             </div>
@@ -174,6 +166,18 @@ if($role == 'admin'){
             <div class="mb-3">
                 <label for="basic-url" class="form-label">Harga</label>
                 <input type="text" value="<?= number_format($data['price'], 0, ',', '.'); ?>" class="form-control" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="basic-url" class="form-label">Pembayaran</label>
+                <input type="text" value="<?= $data['metode'] ?>" class="form-control" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="basic-url" class="form-label">Tanggal Pesan</label>
+                <input type="text" value="<?= $data['tgl_p'] ?>" class="form-control" readonly>
+            </div>
+                <div class="mb-3">
+                <label for="basic-url" class="form-label">Tanggal diterima</label>
+                <input type="text" value="<?= $data['created_at'] ?>" class="form-control" readonly>
             </div>
             <div class="mb-3">
                 <label for="basic-url" class="form-label">Alamat User</label>

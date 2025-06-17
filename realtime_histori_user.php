@@ -5,7 +5,7 @@ $histori=mysqli_query($koneksi,"SELECT transaksi.id as id_transaksi,pesanan.id A
 JOIN user ON user.id = pesanan.user_id 
 JOIN seller ON seller.id = produk.seller_id
 JOIN transaksi ON transaksi.pesanan_id=pesanan.id
-WHERE user.id='$s_id' AND pesanan.status='selesai'");
+WHERE user.id='$s_id' AND (pesanan.status='diterima' OR pesanan.status='selesai')");
 ?>
 <?php
 $no = 1;

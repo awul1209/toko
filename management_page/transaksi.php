@@ -165,7 +165,12 @@ $jumlah=$_POST['jumlah'];
 $metode=$_POST['metode'];
 $harga= $_POST['total_harga'];
 $status='pending';
-$query=mysqli_query($koneksi,"INSERT INTO pesanan (user_id,produk_id,quantity,price,status,tgl_pesanan,ukuran,warna,rasa,metode,briva) VALUES ('$s_id','$id_produk','$jumlah','$harga','$status','$tgl','$ukuran','$warna','$rasa','$metode','$briva')");
+
+if($metode == 'Briva'){
+    $query=mysqli_query($koneksi,"INSERT INTO pesanan (user_id,produk_id,quantity,price,status,tgl_pesanan,ukuran,warna,rasa,metode,briva) VALUES ('$s_id','$id_produk','$jumlah','$harga','menunggu pembayaran','$tgl','$ukuran','$warna','$rasa','$metode','$briva')");
+}elseif($metode == 'COD'){
+    $query=mysqli_query($koneksi,"INSERT INTO pesanan (user_id,produk_id,quantity,price,status,tgl_pesanan,ukuran,warna,rasa,metode,briva) VALUES ('$s_id','$id_produk','$jumlah','$harga','$status','$tgl','$ukuran','$warna','$rasa','$metode','$briva')");
+}
 
 if($query){
     echo "<script>
