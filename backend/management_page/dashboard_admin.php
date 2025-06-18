@@ -3,13 +3,46 @@ $date=date('Y-m-d');
 $jmlseller = mysqli_query($koneksi, "SELECT COUNT(seller.id) as jml_seller FROM seller");
 $seller = mysqli_fetch_assoc($jmlseller);
 
-$user=mysqli_query($koneksi,"SELECT COUNT(user.id) jml_user FROM user WHERE role='user'");
-$userr=mysqli_fetch_assoc($user);
+$user=mysqli_query($koneksi,"SELECT
+    DATE_FORMAT(t.created_at, '%Y-%m') AS bulan_transaksi,
+    COUNT(t.id) AS jumlah_transaksi,
+    
+    -- Mengubah format kolom total_pendapatan_admin ke Rupiah
+    CONCAT('Rp. ', REPLACE(FORMAT(SUM(p.price * 0.10), 0), ',', '.')) AS total_pendapatan_admin
+    
+FROM
+    transaksi t
+JOIN
+    pesanan p ON t.pesanan_id = p.id
+WHERE
+    p.status = 'selesai'
+GROUP BY
+    bulan_transaksi
+ORDER BY
+    bulan_transaksi DESC;");
+$jml_pendapatan=mysqli_fetch_assoc($user);
 
 $produk=mysqli_query($koneksi,"SELECT COUNT(produk.id) jml_produk FROM produk");
 $produkk=mysqli_fetch_assoc($produk);
 
-
+// SELECT
+//     s.id AS id_penjual,
+//     s.nama_toko AS nama_penjual,
+//     CONCAT('Rp. ', REPLACE(FORMAT(SUM(p.price * 0.90), 0), ',', '.')) AS total_pendapatan_penjual
+// FROM
+//     transaksi t
+// JOIN
+//     pesanan p ON t.pesanan_id = p.id
+// JOIN
+//     produk pr ON p.produk_id = pr.id
+// JOIN
+//     seller s ON pr.seller_id = s.id
+// WHERE
+//     p.status = 'selesai'
+// GROUP BY
+//     s.id, s.nama_toko
+// ORDER BY
+//     SUM(p.price * 0.90) DESC; -- Diurutkan dari pendapatan terbesar
 ?>
 
 <div class="row kotak-seller">
@@ -48,13 +81,13 @@ $produkk=mysqli_fetch_assoc($produk);
                 <div style="display: flex; justify-content: space-between;">
                     <div>
                         <h3 style="  font-weight: bold;">
-                            <?= $userr['jml_user']; ?>
+                            <?= $jml_pendapatan['total_pendapatan_admin']; ?>
                         </h3>
-                        <p style=" font-weight: bold;">Users</p>
+                        <p style=" font-weight: bold;">Jumlah Pendapatan</p>
                     </div>
                     <!-- Right: Image -->
                     <div>
-                        <img src="assets/img/icon_action/user.png" alt="Transaksi" style="width: 60px; height: auto;"/>
+                        <img src="assets/img/icon_action/pen.png" alt="Transaksi" style="width: 60px; height: auto;"/>
                     </div>
                 </div>
             </div>
@@ -108,143 +141,97 @@ $produkk=mysqli_fetch_assoc($produk);
     <br>
 </div>
 
+<?php
+// Langkah 1: Tentukan tahun yang akan ditampilkan (misalnya, tahun saat ini)
+$tahun_sekarang = date('Y');
+
+// Langkah 2: Siapkan array untuk menampung jumlah transaksi per bulan (dari 1 sampai 12)
+// Kita isi semua dengan nilai 0 terlebih dahulu.
+$transaksi_per_bulan = array_fill(1, 12, 0);
+
+// Langkah 3: Buat SATU query efisien untuk mengambil jumlah transaksi per bulan untuk tahun ini
+$query_chart = "
+    SELECT 
+        MONTH(transaksi.created_at) AS bulan, 
+        COUNT(transaksi.id) AS jumlah_transaksi
+    FROM 
+        transaksi
+    WHERE 
+        YEAR(transaksi.created_at) = '$tahun_sekarang'
+    GROUP BY 
+        bulan
+";
+
+$hasil_chart = mysqli_query($koneksi, $query_chart);
+
+// Langkah 4: Isi array $transaksi_per_bulan dengan data dari database
+while ($row = mysqli_fetch_assoc($hasil_chart)) {
+    $bulan = (int)$row['bulan'];
+    $jumlah = (int)$row['jumlah_transaksi'];
+    if (isset($transaksi_per_bulan[$bulan])) {
+        $transaksi_per_bulan[$bulan] = $jumlah;
+    }
+}
+
+// Langkah 5: Ubah array PHP menjadi format data yang bisa dibaca oleh JavaScript (Chart.js)
+// array_values akan mengambil nilai [0, 5, 10, ...] dan mengabaikan key [1, 2, 3, ...]
+// implode akan menggabungkan nilai-nilai tersebut dengan koma.
+$data_chart_js = implode(',', array_values($transaksi_per_bulan));
+?>
+
 <script>
-    let tahunSekarang = new Date().getFullYear();
-    const transaksii = document.getElementById('transaksi');
-    new Chart(transaksii, {
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('transaksi');
+    const tahunSekarang = <?= json_encode($tahun_sekarang) ?>;
+
+    new Chart(ctx, {
         type: 'bar',
         data: {
             labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
             datasets: [{
-                label: '# Data Transaksi ' + tahunSekarang,
-                data:[
-                    <?php
-                    $sql_transaksi1 = mysqli_query($koneksi,
-                    "SELECT transaksi.created_at 
-                    FROM transaksi 
-                    LEFT JOIN pesanan ON transaksi.pesanan_id = pesanan.id 
-                    JOIN produk ON pesanan.produk_id = produk.id 
-                    JOIN seller ON produk.seller_id = seller.id 
-                    WHERE  DATE(transaksi.created_at) BETWEEN '$tahun-01-01' AND '$tahun-01-30'");
-                    echo mysqli_num_rows($sql_transaksi1);
-                    ?>,
-                    <?php
-                    $sql_transaksi2 = mysqli_query($koneksi, "SELECT transaksi.created_at 
-                    FROM transaksi 
-                    LEFT JOIN pesanan ON transaksi.pesanan_id = pesanan.id 
-                    JOIN produk ON pesanan.produk_id = produk.id 
-                    JOIN seller ON produk.seller_id = seller.id 
-                    WHERE  DATE(transaksi.created_at) BETWEEN '$tahun-02-01' AND '$tahun-02-29'");
-                    echo mysqli_num_rows($sql_transaksi2);
-                    ?>,
-                    <?php
-                    $sql_transaksi3 = mysqli_query($koneksi, "SELECT transaksi.created_at 
-                    FROM transaksi 
-                    LEFT JOIN pesanan ON transaksi.pesanan_id = pesanan.id 
-                    JOIN produk ON pesanan.produk_id = produk.id 
-                    JOIN seller ON produk.seller_id = seller.id 
-                    WHERE  DATE(transaksi.created_at) BETWEEN '$tahun-03-01' AND '$tahun-03-30'");
-                    echo mysqli_num_rows($sql_transaksi3);
-                    ?>,
-                    <?php
-                    $sql_transaksi4 = mysqli_query($koneksi, "SELECT transaksi.created_at 
-                    FROM transaksi 
-                    LEFT JOIN pesanan ON transaksi.pesanan_id = pesanan.id 
-                    JOIN produk ON pesanan.produk_id = produk.id 
-                    JOIN seller ON produk.seller_id = seller.id 
-                    WHERE  DATE(transaksi.created_at) BETWEEN '$tahun-04-01' AND '$tahun-04-30'");
-                    echo mysqli_num_rows($sql_transaksi4);
-                    ?>,
-                    <?php
-                    $sql_transaksi5 = mysqli_query($koneksi, "SELECT transaksi.created_at 
-                    FROM transaksi 
-                    LEFT JOIN pesanan ON transaksi.pesanan_id = pesanan.id 
-                    JOIN produk ON pesanan.produk_id = produk.id 
-                    JOIN seller ON produk.seller_id = seller.id 
-                    WHERE  DATE(transaksi.created_at) BETWEEN '$tahun-05-01' AND '$tahun-05-30'");
-                    echo mysqli_num_rows($sql_transaksi5);
-                    ?>,
-                    <?php
-                    $sql_transaksi6 = mysqli_query($koneksi, "SELECT transaksi.created_at 
-                    FROM transaksi 
-                    LEFT JOIN pesanan ON transaksi.pesanan_id = pesanan.id 
-                    JOIN produk ON pesanan.produk_id = produk.id 
-                    JOIN seller ON produk.seller_id = seller.id 
-                    WHERE  DATE(transaksi.created_at) BETWEEN '$tahun-06-01' AND '$tahun-06-30'");
-                    echo mysqli_num_rows($sql_transaksi6);
-                    ?>,
-                    <?php
-                    $sql_transaksi7 = mysqli_query($koneksi, "SELECT transaksi.created_at 
-                    FROM transaksi 
-                    LEFT JOIN pesanan ON transaksi.pesanan_id = pesanan.id 
-                    JOIN produk ON pesanan.produk_id = produk.id 
-                    JOIN seller ON produk.seller_id = seller.id 
-                    WHERE  DATE(transaksi.created_at) BETWEEN '$tahun-07-01' AND '$tahun-07-30'");
-                    echo mysqli_num_rows($sql_transaksi7);
-                    ?>,
-                    <?php
-                    $sql_transaksi8 = mysqli_query($koneksi, "SELECT transaksi.created_at 
-                    FROM transaksi 
-                    LEFT JOIN pesanan ON transaksi.pesanan_id = pesanan.id 
-                    JOIN produk ON pesanan.produk_id = produk.id 
-                    JOIN seller ON produk.seller_id = seller.id 
-                    WHERE  DATE(transaksi.created_at) BETWEEN '$tahun-08-01' AND '$tahun-08-30'");
-                    echo mysqli_num_rows($sql_transaksi8);
-                    ?>,
-                    <?php
-                    $sql_transaksi9 = mysqli_query($koneksi, "SELECT transaksi.created_at 
-                    FROM transaksi 
-                    LEFT JOIN pesanan ON transaksi.pesanan_id = pesanan.id 
-                    JOIN produk ON pesanan.produk_id = produk.id 
-                    JOIN seller ON produk.seller_id = seller.id 
-                    WHERE  DATE(transaksi.created_at) BETWEEN '$tahun-09-01' AND '$tahun-09-30'");
-                    echo mysqli_num_rows($sql_transaksi9);
-                    ?>,
-                    <?php
-                    $sql_transaksi10 = mysqli_query($koneksi, "SELECT transaksi.created_at 
-                    FROM transaksi 
-                    LEFT JOIN pesanan ON transaksi.pesanan_id = pesanan.id 
-                    JOIN produk ON pesanan.produk_id = produk.id 
-                    JOIN seller ON produk.seller_id = seller.id 
-                    WHERE  DATE(transaksi.created_at) BETWEEN '$tahun-10-01' AND '$tahun-10-30'");
-                    echo mysqli_num_rows($sql_transaksi10);
-                    ?>,
-                    <?php
-                    $sql_transaksi11 = mysqli_query($koneksi, "SELECT transaksi.created_at 
-                    FROM transaksi 
-                    LEFT JOIN pesanan ON transaksi.pesanan_id = pesanan.id 
-                    JOIN produk ON pesanan.produk_id = produk.id 
-                    JOIN seller ON produk.seller_id = seller.id 
-                    WHERE  DATE(transaksi.created_at) BETWEEN '$tahun-11-01' AND '$tahun-11-30'");
-                    echo mysqli_num_rows($sql_transaksi11);
-                    ?>,
-                    <?php
-                    $sql_transaksi12 = mysqli_query($koneksi, "SELECT transaksi.created_at 
-                    FROM transaksi 
-                    LEFT JOIN pesanan ON transaksi.pesanan_id = pesanan.id 
-                    JOIN produk ON pesanan.produk_id = produk.id 
-                    JOIN seller ON produk.seller_id = seller.id 
-                    WHERE  DATE(transaksi.created_at) BETWEEN '$tahun-12-01' AND '$tahun-12-30'");
-                    echo mysqli_num_rows($sql_transaksi12);
-                    ?>,
-                ],
-                backgroundColor: [
-                    '#3498DB'
-                ],
-                borderColor: '#3498DB',
-
-                // borderWidth: 1
+                label: 'Total Transaksi Tahun ' + tahunSekarang,
+                // Data diambil dari variabel PHP yang sudah diolah
+                data: [<?= $data_chart_js ?>],
+                backgroundColor: 'rgba(52, 152, 219, 0.7)', // Warna biru dengan sedikit transparansi
+                borderColor: 'rgba(41, 128, 185, 1)', // Warna biru lebih gelap untuk border
+                borderWidth: 1,
+                borderRadius: 5 // Membuat ujung bar sedikit melengkung
             }]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 y: {
-                    min: 0,
-                    max: 30
+                    beginAtZero: true,
+                    // Membuat angka di sumbu Y menjadi integer (tidak ada desimal)
+                    ticks: {
+                        stepSize: 1 
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.y !== null) {
+                                label += context.parsed.y + ' transaksi';
+                            }
+                            return label;
+                        }
+                    }
                 }
             }
         }
     });
+});
 </script>
 
 <?php

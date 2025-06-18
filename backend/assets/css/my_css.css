@@ -19,7 +19,7 @@ th {
   box-shadow: 5px 5px 2px #b8b8b8, -1px -1px 2px #ececec;
   display: flex;
   justify-content: center;
-  max-height: 300px;
+  max-height: 350px;
   flex: 2;
 }
 .kotak-chart .kategori{
@@ -29,7 +29,7 @@ th {
   display: flex;
   justify-content: center;
  
-  max-height: 300px;
+  max-height: 350px;
   flex: 1;
 }
 /* end-chart */
