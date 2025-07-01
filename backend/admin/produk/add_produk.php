@@ -17,7 +17,6 @@
     <label for="kategori" class="col-form-label">Masukkan kategori:</label>
         <select class="form-select" aria-label="Default select example" name="kategori" required>
     <option selected>Pilih</option>
-    <option value="Fashion">Fashion</option>
     <option value="Kerajinan">Kerajinan</option>
     <option value="Makanan">Makanan</option>
     <option value="Sembako">Sembako</option>
@@ -60,14 +59,14 @@
     <label for="deskripsi" class="col-form-label">Masukkan Deskripsi:</label>
     <textarea class="form-control" name="deskripsi" id=""></textarea>
   </div>
-  <div class="mb-2 kotak-input-user">
+  <!-- <div class="mb-2 kotak-input-user">
     <label for="metode" class="col-form-label">Masukkan pembayaran:</label>
     <input type="text" name="metode" class="form-control" id="metode">
-  </div>
-  <div class="mb-2 kotak-input-user">
+  </div> -->
+  <!-- <div class="mb-2 kotak-input-user">
     <label for="briva" class="col-form-label">Masukkan briva:</label>
     <input type="text" name="briva" class="form-control" id="briva">
-  </div>
+  </div> -->
 </div>
 
 <div class="kotak-form-user col-12">
@@ -151,8 +150,8 @@ if (isset($_POST['simpan'])) {
     $harga = $_POST['harga'];
     $stock = $_POST['stock'];
     $diskon = $_POST['diskon'];
-    $metode = $_POST['metode'];
-    $briva = $_POST['briva'];
+    $metode = 'Briva, COD';
+    $briva = '8953JD87';
     $deskripsi = $_POST['deskripsi'];
         // Menangani gambar
     $gambar1 = ($_FILES['gambar1']['error'] === 4) ? NULL : upload1();

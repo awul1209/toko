@@ -156,22 +156,22 @@ $data=mysqli_fetch_assoc($query);
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="modalBayarLabel"><i class="bi bi-wallet me-2"></i>Detail Pembayaran</h5>
+            <h5 class="modal-title" id="modalBayarLabel"><i class="bi bi-wallet me-2"></i>Uplod Bukti Pembayaran</h5>
             
           </div>
-        <form action="" method="post">
+        <form action="" method="post" enctype="multipart/form-data">
           <div class="modal-body">
             <div class="text-center">
               <div class="mb-4">
                 <p class="text-muted mb-1">Total Pembayaran</p>
                 <h2 class="fw-bold display-5" id="modalTotalPembayaran">Rp 0</h2>
               </div>
-              <p class="text-muted">Silakan lakukan pembayaran ke nomor Virtual Account di bawah ini.</p>
+              <p class="text-muted">Silakan upload bukti pembayaran di bawah ini.</p>
               <div class="bg-light p-3 rounded mt-3 mb-4">
-                <h6 class="text-uppercase text-secondary" style="font-size: 0.8rem;">Nomor Virtual Account</h6>
+                <h6 class="text-uppercase text-secondary" style="font-size: 0.8rem;">masukkan bukti pembayaran</h6>
                 <div class="input-group">
-                  <input type="text" class="form-control form-control-lg text-center fs-4" id="virtualAccountNumber" readonly name="id_pesanan">
-                  <button class="btn btn-outline-secondary" type="button" id="copyButton" title="Salin Nomor VA"><i class="bi bi-copy"></i></button>
+                  <input type="hidden" class="form-control form-control-lg text-center fs-4" id="virtualAccountNumber" readonly name="id_pesanan">
+                  <input type="file"  class="form-control form-control-lg text-center fs-4" name="bukti" require>
                 </div>
                 <div id="copyAlert" class="form-text text-success d-none">Nomor berhasil disalin!</div>
               </div>
@@ -179,7 +179,7 @@ $data=mysqli_fetch_assoc($query);
           </div>
           <div class="modal-footer">
                 <button type="button" class="btn btn-secondary"><a href="?page=dashboard" class="text-white text-decoration-none" >Tutup</a></button>
-                <button type="submit" name="bayar" class="btn btn-primary">Saya Sudah Bayar</button>
+                <button type="submit" name="bayar" class="btn btn-primary">Upload</button>
             </div>
         </form>
         </div>
@@ -512,7 +512,8 @@ if (isset($_POST['ubah'])) {
 
 if (isset($_POST['bayar'])) {
     $id = $_POST['id_pesanan'];
-    $update = mysqli_query($koneksi, "UPDATE pesanan set status='proses' WHERE id='$id'");
+     $bukti = ($_FILES['bukti']['error'] === 4) ? NULL : upload1();
+    $update = mysqli_query($koneksi, "UPDATE pesanan set status='proses', bukti='$bukti' WHERE id='$id'");
     if ($update) {
         echo "<script>
         Swal.fire({title: 'Pesanan Sudah di Proses',text: '',icon: 'success',confirmButtonText: 'OK'
@@ -582,5 +583,59 @@ if (isset($_POST['selesai'])) {
             }
             })</script>";
     }
+}
+
+function upload1()
+{
+    $namafile = $_FILES['bukti']['name'];
+    $ukuranfile = $_FILES['bukti']['size'];
+    $error = $_FILES['bukti']['error'];
+    $tmpname = $_FILES['bukti']['tmp_name'];
+
+    // cek gambar tidak diupload
+    if ($error === 4) {
+        echo "
+        <script>
+        alert('pilih gambar');
+        </script>
+        
+        ";
+        return false;
+    }
+    // cek yang di uplod gambar atau tidak
+    $ektensigambarvalid = ['jpg', 'jpeg', 'png', 'webp','jfif'];
+
+    $ektensigambar = explode('.', $namafile);
+    $ektensigambar = strtolower(end($ektensigambar));
+    // cek adakah string didalam array
+    if (!in_array($ektensigambar, $ektensigambarvalid)) {
+        echo "
+        <script>
+        alert('yang anda upload bukan gambar');
+        </script>
+        ";
+
+        return false;
+    }
+    // cek jika ukuran terlalu besar
+    if ($ukuranfile > 90000000) {
+        echo "
+        <script>
+        alert('ukuran gambar terlalu besar');
+        </script>
+        
+        ";
+        return false;
+    }
+
+    // lolos pengecekan , gambar siap di upload
+    // generete nama gambar baru
+    $namafilebaru = uniqid();
+    $namafilebaru .= '.';
+    $namafilebaru .= $ektensigambar;
+
+    move_uploaded_file($tmpname, 'assets/bukti/' . $namafilebaru);
+
+    return $namafilebaru;
 }
 ?>

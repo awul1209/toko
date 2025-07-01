@@ -4,7 +4,6 @@ session_start();
 
 include '../koneksi.php';
 error_reporting(0);
-
 if (isset($_SESSION['ses_id']) == '') {
   header('Location: ./index.php');
 } else {

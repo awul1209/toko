@@ -8,7 +8,7 @@
    <div class="card-body">
     <?php
     // Langkah 1: Jalankan query dan simpan semua hasilnya ke dalam array
-    $query_pesanan = "SELECT pesanan.admin, user.alamat,pesanan.id AS id_pesanan, produk.id AS id_produk, seller.id AS id_toko, user.id as id_user, produk.gambar1, seller.nama_toko, produk.produk AS produk, pesanan.quantity, pesanan.ukuran, pesanan.warna, pesanan.rasa, pesanan.metode, pesanan.price, pesanan.tgl_pesanan, pesanan.status,pesanan.metode,pesanan.briva, user.email, user.kontak FROM pesanan JOIN produk ON produk.id = pesanan.produk_id JOIN user ON user.id = pesanan.user_id JOIN seller ON seller.id = produk.seller_id WHERE pesanan.metode='Briva' AND (pesanan.admin = '' OR pesanan.admin = 'proses' OR pesanan.status='diterima') AND (pesanan.status ='menunggu pembayaran' OR pesanan.status='bayar' OR pesanan.status='proses'OR pesanan.status='di proses' OR pesanan.status='dikirim')";
+    $query_pesanan = "SELECT pesanan.admin, user.alamat,pesanan.id AS id_pesanan, produk.id AS id_produk, seller.id AS id_toko, user.id as id_user, produk.gambar1, seller.nama_toko, produk.produk AS produk, pesanan.quantity, pesanan.ukuran, pesanan.warna, pesanan.rasa, pesanan.metode, pesanan.price, pesanan.tgl_pesanan, pesanan.status,pesanan.metode,pesanan.briva, user.email, user.kontak,pesanan.bukti FROM pesanan JOIN produk ON produk.id = pesanan.produk_id JOIN user ON user.id = pesanan.user_id JOIN seller ON seller.id = produk.seller_id WHERE pesanan.metode='Briva' AND (pesanan.admin = '' OR pesanan.admin = 'proses' OR pesanan.status='diterima') AND (pesanan.status ='menunggu pembayaran' OR pesanan.status='bayar' OR pesanan.status='proses'OR pesanan.status='di proses' OR pesanan.status='dikirim')";
     $hasil_query = mysqli_query($koneksi, $query_pesanan);
     
     $data_pesanan_admin = [];
@@ -69,6 +69,9 @@
                                 <button class="btn btn-light border" disabled><i class="fas fa-truck me-2"></i>Dalam Perjalanan</button>
                             <?php } ?>
                             <button data-bs-toggle="modal" data-bs-target="#modal_detail_admin<?= $row_pesanan['id_pesanan'] ?>" class="btn btn-outline-secondary"><i class="fas fa-eye me-2"></i>Lihat Detail</button>
+                            <?php if($row_pesanan['bukti'] != ''){ ?>
+                            <button data-bs-toggle="modal" data-bs-target="#modaldetailadmin<?= $row_pesanan['id_pesanan'] ?>" class="btn btn-outline-secondary"><i class="fas fa-eye me-2"></i>Bukti Pembayaran</button>
+                            <?php } ?>
                         </div>
                     </div>
                 </div>
@@ -125,10 +128,32 @@
                         </div>
                          <div class="mb-3">
                             <label class="form-label fw-bold">Alamat Pengiriman</label>
-                            <textarea class="form-control" rows="5" readonly><?= htmlspecialchars($row_pesanan['alamat']) ?></textarea>
+                            <textarea class="form-control" rows="3" readonly><?= htmlspecialchars($row_pesanan['alamat']) ?></textarea>
+                        </div>
+                         <div class="mb-3">
+                             <label class="form-label fw-bold">Bukti Pembayaran</label>
+                            <center>
+                                <img src="../assets/bukti/<?= $row_pesanan['bukti'] ?>" alt="Belum Bayar" style="max-width: 150px;">
+                            </center>
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modal detail lagi -->
+ <div class="modal fade" id="modaldetailadmin<?= $row_pesanan['id_pesanan'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-body">
+    <center>
+                                <img src="../assets/bukti/<?= $row_pesanan['bukti'] ?>" alt="bukti" style="max-width: 350px;">
+                            </center>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>

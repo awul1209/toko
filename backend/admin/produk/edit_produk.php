@@ -23,7 +23,6 @@ $row=mysqli_fetch_assoc($result_produk);
     <label for="kategori" class="col-form-label">Masukkan kategori:</label>
         <select class="form-select" aria-label="Default select example" name="kategori" required>
     <option selected value="<?= $row['kategori'] ?>"><?= $row['kategori'] ?></option>
-    <option value="Fashion">Fashion</option>
     <option value="Kerajinan">Kerajinan</option>
     <option value="Makanan">Makanan</option>
     <option value="Sembako">Sembako</option>
@@ -66,14 +65,14 @@ $row=mysqli_fetch_assoc($result_produk);
     <label for="deskripsi" class="col-form-label">Masukkan Deskripsi:</label>
     <textarea class="form-control" name="deskripsi" id=""><?= $row['deskripsi'] ?></textarea>
   </div>
-  <div class="mb-2 kotak-input-user">
-    <label for="metode" class="col-form-label">Masukkan pembayaran:</label>
-    <input type="text" name="metode" class="form-control" id="metode" required  value="<?= $row['metode'] ?>">
-  </div>
-  <div class="mb-2 kotak-input-user">
-    <label for="briva" class="col-form-label">Masukkan briva:</label>
-    <input type="text" name="briva" class="form-control" id="briva" required  value="<?= $row['briva'] ?>">
-  </div>
+  <!-- <div class="mb-2 kotak-input-user"> -->
+    <!-- <label for="metode" class="col-form-label">Masukkan pembayaran:</label> -->
+    <input type="hidden" name="metode" class="form-control" id="metode" required  value="<?= $row['metode'] ?>">
+  <!-- </div>
+  <div class="mb-2 kotak-input-user"> -->
+    <!-- <label for="briva" class="col-form-label">Masukkan briva:</label> -->
+    <input type="hidden" name="briva" class="form-control" id="briva" required  value="<?= $row['briva'] ?>">
+  <!-- </div> -->
 </div>
 
 <div class="kotak-form-user col-12">
