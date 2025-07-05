@@ -95,6 +95,13 @@ while ($row_pesanan = mysqli_fetch_assoc($pesanan)) {
                                 <input type="hidden" name="id_pesanan" value="<?= $row_pesanan['id_pesanan'] ?>">
                                 <button class="btn btn-danger btn-sm w-100" name="hapus" type="submit">Hapus</button>
                             </form>
+                              <button type="button"
+            class="badge bg-primary text-white border-0 mt-1"
+            data-bs-toggle="modal"
+            data-bs-target="#modal_view"
+            data-keterangan-pesanan="<?= htmlspecialchars($row_pesanan['keterangan']) ?>"
+            id="btn_view_pesanan_<?= htmlspecialchars($row_pesanan['id_pesanan']) ?>"> View
+    </button>
                         <?php } ?>
 
                          <?php if ($row_pesanan['status'] == 'bayar') { ?>

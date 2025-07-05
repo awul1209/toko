@@ -1,6 +1,6 @@
 <?php
 $date=date('Y-m-d');
-$jumlahpesanan = mysqli_query($koneksi, "SELECT COUNT(pesanan.id) as jml_pesanan FROM `pesanan` JOIN produk ON pesanan.produk_id=produk.id JOIN user ON pesanan.user_id=user.id JOIN seller ON produk.seller_id=seller.id WHERE seller.id='$ses_id' AND tgl_pesanan='$date' AND status != 'pembatalan' AND status != 'selesai'");
+$jumlahpesanan = mysqli_query($koneksi, "SELECT COUNT(pesanan.id) as jml_pesanan FROM `pesanan` JOIN produk ON pesanan.produk_id=produk.id JOIN user ON pesanan.user_id=user.id JOIN seller ON produk.seller_id=seller.id WHERE seller.id='$ses_id' AND tgl_pesanan='$date' AND status != 'ditolak' AND status != 'pembatalan' AND status != 'selesai' AND (returnn = 0 OR returnn =1 )");
 $pesanan = mysqli_fetch_assoc($jumlahpesanan);
 
 $transaksi=mysqli_query($koneksi,"SELECT COUNT(transaksi.id) jml_transaksi FROM `transaksi` LEFT JOIN pesanan ON transaksi.pesanan_id=pesanan.id JOIN produk ON pesanan.produk_id=produk.id JOIN seller ON produk.seller_id=seller.id WHERE seller.id='$ses_id' AND pesanan.status='selesai'");

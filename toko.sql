@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 07 Jun 2025 pada 06.38
+-- Waktu pembuatan: 05 Jul 2025 pada 04.32
 -- Versi server: 10.4.32-MariaDB
--- Versi PHP: 8.0.30
+-- Versi PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -55,7 +55,9 @@ INSERT INTO `chats` (`id`, `seller_id`, `user_id`, `pesan`, `gambar`, `pengirim_
 (71, 1, 7, 'produk itu sudah lama gak ada kak', 'uploads/download.jpg', 'user', 'seller', 1, '2025-05-01 06:07:10', '2025-05-01 06:07:10', '2025-05-01 06:07:10'),
 (72, 1, 7, 'iya kak bulan ini ready kak tgl 21', '', 'seller', 'user', 1, '2025-05-01 06:08:04', '2025-05-01 06:08:04', '2025-05-01 06:08:04'),
 (73, 1, 7, 'oke kak ', '', 'user', 'seller', 1, '2025-05-01 06:08:39', '2025-05-01 06:08:39', '2025-05-01 06:08:39'),
-(74, 1, 7, 'oke', '', 'seller', 'user', 1, '2025-05-01 06:09:05', '2025-05-01 06:09:05', '2025-05-01 06:09:05');
+(74, 1, 7, 'oke', '', 'seller', 'user', 1, '2025-05-01 06:09:05', '2025-05-01 06:09:05', '2025-05-01 06:09:05'),
+(75, 1, 1, 'hai admin kapan pesanan saya dikirim', '', 'seller', 'user', 1, '2025-06-17 01:03:25', '2025-06-17 01:03:25', '2025-06-17 01:03:25'),
+(76, 1, 1, 'apa kak', '', 'user', 'seller', 1, '2025-06-17 01:03:41', '2025-06-17 01:03:41', '2025-06-17 01:03:41');
 
 -- --------------------------------------------------------
 
@@ -82,6 +84,26 @@ INSERT INTO `keranjang` (`id`, `user_id`, `produk_id`, `created_at`, `updated_at
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `pengembalian`
+--
+
+CREATE TABLE `pengembalian` (
+  `id` int(11) NOT NULL,
+  `pesanan_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `seller_id` int(11) NOT NULL,
+  `alasan` text NOT NULL,
+  `bukti_foto` varchar(255) DEFAULT NULL,
+  `status_pengembalian` enum('diajukan','disetujui_penjual','ditolak_penjual','barang_dikirim_pembeli','barang_diterima_penjual','selesai','sengketa') NOT NULL,
+  `catatan_penolakan` text DEFAULT NULL,
+  `nomor_resi_pengembalian` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `pesanan`
 --
 
@@ -91,7 +113,7 @@ CREATE TABLE `pesanan` (
   `produk_id` int(11) NOT NULL,
   `quantity` int(11) NOT NULL,
   `price` decimal(10,2) NOT NULL,
-  `status` enum('pending','dikirim','ditolak','selesai','di proses','batal','di batalkan','pembatalan') DEFAULT 'pending',
+  `status` enum('pending','dikirim','ditolak','selesai','di proses','batal','di batalkan','pembatalan','menunggu pembayaran','bayar','proses','diterima') DEFAULT 'pending',
   `tgl_pesanan` date DEFAULT NULL,
   `ukuran` varchar(255) DEFAULT NULL,
   `warna` varchar(255) DEFAULT NULL,
@@ -101,19 +123,11 @@ CREATE TABLE `pesanan` (
   `keterangan` text NOT NULL,
   `admin` varchar(255) NOT NULL,
   `estimasi` varchar(255) NOT NULL,
+  `bukti` varchar(255) NOT NULL,
+  `returnn` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data untuk tabel `pesanan`
---
-
-INSERT INTO `pesanan` (`id`, `user_id`, `produk_id`, `quantity`, `price`, `status`, `tgl_pesanan`, `ukuran`, `warna`, `rasa`, `metode`, `briva`, `keterangan`, `admin`, `estimasi`, `created_at`, `updated_at`) VALUES
-(8, 1, 12, 2, 10000.00, 'selesai', '2025-06-05', '-', '-', 'Coklat', 'COD', '', '', 'setuju', '0', '2025-06-05 09:28:17', '2025-06-05 09:28:17'),
-(9, 1, 8, 2, 10000.00, 'selesai', '2025-06-05', '-', '-', 'Manis', 'Cod', '', '', 'setuju', '0', '2025-06-05 09:34:48', '2025-06-05 09:34:48'),
-(10, 1, 1, 1, 50000.00, 'selesai', '2025-06-05', 'L', 'Merah', '-', 'COD', '', '', 'setuju', '0', '2025-06-05 09:41:56', '2025-06-05 09:41:56'),
-(12, 7, 6, 3, 30000.00, 'dikirim', '2025-06-07', '-', '-', 'Manis', 'COD', '', '', 'setuju', '2025-06-08', '2025-06-07 02:14:11', '2025-06-07 02:14:11');
 
 -- --------------------------------------------------------
 
@@ -154,7 +168,8 @@ INSERT INTO `produk` (`id`, `seller_id`, `produk`, `deskripsi`, `kategori`, `har
 (7, 1, 'Susu ', 'Susu Kualitas tinggi', 'Makanan', '15000', 'Coklat,Vanila', '-', '-', 10, 5, 'COD', '-', 'm3.png', '', '', '2025-02-19 05:54:02', '2025-02-19 05:54:02'),
 (8, 2, 'Potato', 'Terbuat dari kentang berkualitas ', 'Makanan', '5000', 'Manis,Asin,Pedas', '-', '-', 10, 20, 'Briva,Cod', 'KDG089372', 'm4.png', '', '', '2025-02-19 05:54:02', '2025-02-19 05:54:02'),
 (9, 1, 'Sepatu Nike', '    Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste facilis voluptatum nam magni architecto ipsa fugiat facere cupiditate voluptatem officia natus omnis id adipisci necessitatibus, harum aut! Quod laboriosam id deleniti architecto perferendis nemo, accusantium a modi aspernatur distinctio! Saepe quam reprehenderit minima reiciendis quas distinctio dignissimos iure ducimus, officia ullam sapiente ex? Totam ab veniam minima sit provident quibusdam nisi temporibus natus pariatur repudiandae cumque consectetur dolores consequatur, reprehenderit velit nesciunt beatae! Distinctio ea nihil id perferendis voluptatem autem, quos sit labore aut illum ad deserunt magnam officia veritatis placeat cum! Itaque est quae libero modi voluptatem aperiam deleniti et fugiat obcaecati in quam distinctio ipsa, delectus, atque eius quod alias laborum, quasi optio sunt. Ducimus, nostrum. Dolor ipsam reiciendis ipsum asperiores doloribus fuga voluptatem dolorum porro dignissimos, voluptate tenetur laudantium illo. Consectetur, repellat ipsam architecto laborum voluptates ut tenetur perspiciatis corrupti expedita mollitia rerum doloremque ratione? Nostrum ratione temporibus id neque officiis rem. Dolorum, omnis. Nostrum sunt libero excepturi aliquid quo nam, cupiditate cum, provident laborum eaque commodi iusto eius! Facilis error ducimus ipsa accusamus aut voluptates voluptatum laborum nulla maiores ex quos deleniti aperiam, quas pariatur fuga vitae possimus atque quae quidem eius eveniet. Aut, quae fugit?', 'Fashion', '200000', '-', 'L,S,M', 'Merah,Putih,Blue', 10, 20, 'Briva,COD', 'GDH8395', 'f5.png', 'f6.png', 'f4.png', '2025-02-19 05:54:02', '2025-02-19 05:54:02'),
-(12, 1, 'Snack Ship', 'Snack renyah dari keju dan coklat berkualitas ', 'Makanan', '5000', 'Keju,Coklat', '-', '-', 10, 0, 'COD', '-', '68130d80445d7.jpg', '', '', '2025-05-01 05:58:24', '2025-05-01 05:58:24');
+(12, 1, 'Snack Ship', 'Snack renyah dari keju dan coklat berkualitas ', 'Makanan', '5000', 'Keju,Coklat', '-', '-', 10, 0, 'COD', '-', '68130d80445d7.jpg', '', '', '2025-05-01 05:58:24', '2025-05-01 05:58:24'),
+(13, 1, 'produk anyar', 'kerajinan tangan dari daun jatih untuk hiasan dinding', 'Kerajinan', '50000', '-', 'Kecil, Sedang', 'Merah, Kuning', 12, 0, 'Briva, COD', '8953JD87', '6863d27aae70f.png', '', '', '2025-07-01 12:20:10', '2025-07-01 12:20:10');
 
 -- --------------------------------------------------------
 
@@ -204,8 +219,8 @@ CREATE TABLE `seller` (
 --
 
 INSERT INTO `seller` (`id`, `nama`, `email`, `password`, `kontak`, `alamat`, `nama_toko`, `deskripsi_toko`, `gambar`, `latlng`, `created_at`) VALUES
-(1, 'Awul', 'awul@gmail.com', '$2y$10$4j0ggEqMRCnphQJmA/g/SOqxl96Nb9DbLLH6X0EP6RAcqLWcyPJ3G', '04395035289', 'saronggi desa kermata', 'awulstore', 'toko peralatan komputer dan handphone lengkap', '67c84e54b74b1.png', '-7.000634086461189, 113.86884544661459', '2025-02-19 02:36:35'),
-(2, 'muhammad riyas', 'riyas@gmail.com', '$2y$10$xu.BCUu/RA4tPsAy1aDUUuJJ/TZLDKbBEaZPIG6kHS8Bu1iIjbDZu', '09876543', 'jalan raya gapura paberasan', 'toko kembar berkah', 'menjual aneka perlengkapan kantor dan sekolah (atk)', '67c84e9ba341a.png', '', '2025-02-27 08:39:37'),
+(1, 'Awul', 'awul@gmail.com', '$2y$10$4j0ggEqMRCnphQJmA/g/SOqxl96Nb9DbLLH6X0EP6RAcqLWcyPJ3G', '04395035289', 'saronggi desa kermata', 'awulstore', 'toko peralatan komputer dan handphone lengkap', '67c84e54b74b1.png', '-6.963839292129292, 113.92006448135483', '2025-02-19 02:36:35'),
+(2, 'muhammad riyas', 'riyas@gmail.com', '$2y$10$xu.BCUu/RA4tPsAy1aDUUuJJ/TZLDKbBEaZPIG6kHS8Bu1iIjbDZu', '09876543', 'jalan raya gapura paberasan', 'toko kembar berkah', 'menjual aneka perlengkapan kantor dan sekolah (atk)', '67c84e9ba341a.png', '-7.005150979415154, 113.86002671429402', '2025-02-27 08:39:37'),
 (3, 'Azizah', 'azizah@gmail.com', '$2y$10$WawIdYZgmUkFw6T1uJr95e6TYJEeSroCWO8nMxm3DHXTiNupInspu', '0345350', 'Jalan Raya Lenteng No. ABC gang 12 dusun salosa', 'Azizah Store', 'Toko Peralatan Alat Alat Memasak Lengkap dan Murah', '67c543845fcf2.png', '', '2025-03-03 05:25:06');
 
 -- --------------------------------------------------------
@@ -241,15 +256,6 @@ CREATE TABLE `transaksi` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data untuk tabel `transaksi`
---
-
-INSERT INTO `transaksi` (`id`, `pesanan_id`, `created_at`, `updated_at`) VALUES
-(7, 8, '2025-06-05 09:33:57', '2025-06-05 09:33:57'),
-(8, 9, '2025-06-05 09:36:57', '2025-06-05 09:36:57'),
-(9, 10, '2025-06-05 09:42:13', '2025-06-05 09:42:13');
-
 -- --------------------------------------------------------
 
 --
@@ -265,15 +271,6 @@ CREATE TABLE `ulasan` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `transaksi_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data untuk tabel `ulasan`
---
-
-INSERT INTO `ulasan` (`id`, `user_id`, `produk_id`, `rating`, `comment`, `created_at`, `transaksi_id`) VALUES
-(8, 1, 8, 4, 'Pengiriman cepat, snacknya sangat enak', '2025-06-05 09:37:19', 8),
-(11, 1, 1, 3, 'bagus\r\n', '2025-06-05 09:58:02', 9),
-(12, 1, 12, 4, 'bagus', '2025-06-05 09:58:56', 7);
 
 -- --------------------------------------------------------
 
@@ -298,11 +295,12 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `nama`, `email`, `password`, `role`, `kontak`, `alamat`, `created_at`, `updated_at`) VALUES
-(1, 'Ayyubb', 'ayyub@gmail.com', '$2y$10$LwmhqPFk5EoFQz2Z9gdkrOBCeJC.0W783IKCtDvhg8XCsnHiPeSiG', 'user', 720520012, 'Jalan Raya Gapura Paberasan Sumenep Dusun Salosa RT/12 RW/06', '2025-02-19 00:02:14', '2025-02-19 00:02:14'),
+(1, 'Ayyubb', 'ayyub@gmail.com', '$2y$10$LwmhqPFk5EoFQz2Z9gdkrOBCeJC.0W783IKCtDvhg8XCsnHiPeSiG', 'user', 720520012, 'Paberasan, Sumenep, Jawa Timur, Jawa, 69417, Indonesia', '2025-02-19 00:02:14', '2025-02-19 00:02:14'),
 (4, 'admin', 'admin@gmail.com', '$2y$10$AglQndIQL62FGy3pto.LMOUvrz1.uygg5lTtfozz2hjCIxllHS9Au', 'admin', 8237427, '', '2025-02-19 03:32:41', '2025-02-19 03:32:41'),
 (5, 'tolak wulandari', 'wulan@gmail.com', '$2y$10$ARudbRWHeXBS.MLC6hHZvevAu5CaNJJONKeL/7.UtsfuXiwLaxWOm', 'user', 8773654, 'Jalan Raya Saronggi Dusun Kermata RT/12 RW/11', '2025-02-27 08:29:10', '2025-02-27 08:29:10'),
-(7, 'Sucia', 'suci@gmail.com', '$2y$10$cyO0W1Aj4BPd/VHaQ1fP9eTHehJwbQn/VI7tb7L05Gt9X494j16Gu', 'user', 39845398, 'Paberasan, Sumenep, Jawa Timur, Jawa, 69417, Indonesia\r\n', '2025-03-03 00:40:49', '2025-03-03 00:40:49'),
-(8, 'linda', 'linda@gmail.com', '$2y$10$5ePjwbCaJY5TDuBD0GIbr.DN01gEKhOJRxlmgo0//pmSgP0FgfT/2', 'user', 0, '', '2025-04-30 04:55:43', '2025-04-30 04:55:43');
+(7, 'Sucia', 'suci@gmail.com', '$2y$10$cyO0W1Aj4BPd/VHaQ1fP9eTHehJwbQn/VI7tb7L05Gt9X494j16Gu', 'user', 39845398, 'Ellak Daya, Sumenep, Jawa Timur, Jawa, 69463, Indonesia', '2025-03-03 00:40:49', '2025-03-03 00:40:49'),
+(8, 'linda', 'linda@gmail.com', '$2y$10$5ePjwbCaJY5TDuBD0GIbr.DN01gEKhOJRxlmgo0//pmSgP0FgfT/2', 'user', 0, '', '2025-04-30 04:55:43', '2025-04-30 04:55:43'),
+(9, 'hasan', 'hasan@gmail.com', '$2y$10$rWY4ivqhw4hRmMqI49i/W.G8fKvJSpsUXT.OibvgBvm6ape6WR2y2', 'user', 0, '', '2025-06-11 10:59:19', '2025-06-11 10:59:19');
 
 --
 -- Indexes for dumped tables
@@ -321,6 +319,15 @@ ALTER TABLE `chats`
 --
 ALTER TABLE `keranjang`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `pengembalian`
+--
+ALTER TABLE `pengembalian`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `pesanan_id` (`pesanan_id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `seller_id` (`seller_id`);
 
 --
 -- Indeks untuk tabel `pesanan`
@@ -382,7 +389,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT untuk tabel `chats`
 --
 ALTER TABLE `chats`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
 
 --
 -- AUTO_INCREMENT untuk tabel `keranjang`
@@ -391,16 +398,22 @@ ALTER TABLE `keranjang`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
+-- AUTO_INCREMENT untuk tabel `pengembalian`
+--
+ALTER TABLE `pengembalian`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
 -- AUTO_INCREMENT untuk tabel `pesanan`
 --
 ALTER TABLE `pesanan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT untuk tabel `produk`
 --
 ALTER TABLE `produk`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT untuk tabel `rating`
@@ -424,19 +437,19 @@ ALTER TABLE `tentang_kami`
 -- AUTO_INCREMENT untuk tabel `transaksi`
 --
 ALTER TABLE `transaksi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT untuk tabel `ulasan`
 --
 ALTER TABLE `ulasan`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT untuk tabel `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
@@ -448,6 +461,14 @@ ALTER TABLE `user`
 ALTER TABLE `chats`
   ADD CONSTRAINT `chats_ibfk_1` FOREIGN KEY (`seller_id`) REFERENCES `seller` (`id`),
   ADD CONSTRAINT `chats_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
+
+--
+-- Ketidakleluasaan untuk tabel `pengembalian`
+--
+ALTER TABLE `pengembalian`
+  ADD CONSTRAINT `pengembalian_ibfk_1` FOREIGN KEY (`pesanan_id`) REFERENCES `pesanan` (`id`),
+  ADD CONSTRAINT `pengembalian_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  ADD CONSTRAINT `pengembalian_ibfk_3` FOREIGN KEY (`seller_id`) REFERENCES `seller` (`id`);
 
 --
 -- Ketidakleluasaan untuk tabel `pesanan`

@@ -5,7 +5,7 @@ $histori=mysqli_query($koneksi,"SELECT transaksi.id as id_transaksi,pesanan.id A
 JOIN user ON user.id = pesanan.user_id 
 JOIN seller ON seller.id = produk.seller_id
 JOIN transaksi ON transaksi.pesanan_id=pesanan.id
-WHERE user.id='$s_id' AND (pesanan.status='diterima' OR pesanan.status='selesai')");
+WHERE user.id='$s_id' AND pesanan.returnN=0 AND (pesanan.status='diterima' OR pesanan.status='selesai')");
 ?>
 <?php
 $no = 1;
@@ -45,6 +45,8 @@ while ($row_histori = mysqli_fetch_assoc($histori)) {
                 <button class="badge bg-warning text-white border-0" style="cursor: not-allowed;">Selesai</button>
             <?php } else { ?>
                 <button class="badge text-white border-0" style="background-color:#8a38e4;" name="rating" data-bs-target="#modal_rating" data-id="<?= $row_histori['id_transaksi'] ?>" id="btn_rating">Rating</button>
+                <br>
+                <button class="badge bg-danger mt-1 text-white border-0" style="" name="rating" data-bs-target="#modal_return" data-id="<?= $row_histori['id_pesanan'] ?>" id="btn_return">Return</button>
                 <?php } ?>
         </td>
     </tr>

@@ -62,6 +62,174 @@ $data=mysqli_fetch_assoc($query);
             </div>
         </div>
 
+          <!-- pengembalian Saya -->
+       <?php
+$logged_in_user_id = $s_id; 
+$query_pengembalian = "
+    SELECT
+        p.id AS pengembalian_id,
+        p.pesanan_id,
+        p.alasan,
+        p.bukti_foto,
+        p.status_pengembalian,
+        p.catatan_penolakan,
+        p.nomor_resi_pengembalian,
+        p.created_at AS tanggal_pengajuan,
+        ps.quantity AS jumlah_produk_dikembalikan, 
+        ps.price AS harga_satuan_produk,        
+        ps.ukuran,                               
+        ps.warna,                                
+        ps.rasa,                              
+        pr.produk,                          
+        pr.gambar1 AS gambar_produk,
+        seller.nama_toko             
+    FROM
+        pengembalian p
+    JOIN
+        pesanan ps ON p.pesanan_id = ps.id
+    JOIN
+        produk pr ON ps.produk_id = pr.id
+    JOIN seller ON seller.id=pr.seller_id
+    WHERE
+        p.user_id = '$logged_in_user_id'
+    ORDER BY
+        p.created_at DESC;
+";
+
+$result_pengembalian = mysqli_query($koneksi, $query_pengembalian);
+
+if (!$result_pengembalian) {
+    die("Query Error: " . mysqli_error($koneksi));
+}
+
+
+?>
+
+<div class="histori-user mt-4">
+    <h3>Histori Pengajuan Pengembalian</h3>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Toko</th>
+                    <th>Kode Pesanan</th>
+                    <th>Gambar Produk</th>
+                    <th>Nama Produk</th>
+                    <th>Jumlah</th>
+                    <th>Ukuran/Warna/Rasa</th>
+                    <th>Harga Satuan</th>
+                    <th>Alasan</th>
+                    <th>Bukti Foto</th>
+                    <th>Nomor Resi Pengembalian</th>
+                    <th>Status Pengajuan</th>
+                    <th>Catatan Penolakan</th>
+                    <th>Tanggal Pengajuan</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                if (mysqli_num_rows($result_pengembalian) > 0) {
+                    $no = 1;
+                    while ($row_pengembalian = mysqli_fetch_assoc($result_pengembalian)) {
+                ?>
+                        <tr>
+                            <td><?php echo $no++; ?></td>
+                            <td><?php echo htmlspecialchars($row_pengembalian['nama_toko']); ?></td>
+                            <td><?php echo htmlspecialchars($row_pengembalian['pesanan_id']); ?></td>
+                            <td>
+                                <?php if (!empty($row_pengembalian['gambar_produk'])) : ?>
+                                    <img src="assets/img/produk/<?php echo htmlspecialchars($row_pengembalian['gambar_produk']); ?>" alt="Produk" style="width: 70px; height: 70px; object-fit: cover;">
+                                <?php else : ?>
+                                    Tidak Ada Gambar
+                                <?php endif; ?>
+                            </td>
+                            <td><?php echo htmlspecialchars($row_pengembalian['produk']); ?></td>
+                            <td><?php echo htmlspecialchars($row_pengembalian['jumlah_produk_dikembalikan']); ?></td>
+                            <td><?php echo htmlspecialchars($row_pengembalian['ukuran']); ?>/<?php echo htmlspecialchars($row_pengembalian['warna']); ?>/<?php echo htmlspecialchars($row_pengembalian['rasa']); ?></td>
+                            <td><?php echo 'Rp ' . number_format($row_pengembalian['harga_satuan_produk'], 0, ',', '.'); ?></td>
+                            <td><?php echo htmlspecialchars(substr($row_pengembalian['alasan'], 0, 100)) . (strlen($row_pengembalian['alasan']) > 100 ? '...' : ''); ?></td>
+                            <td>
+                                <?php if (!empty($row_pengembalian['bukti_foto'])) : ?>
+                                    <a href="<?php echo htmlspecialchars($row_pengembalian['bukti_foto']); ?>" target="_blank">Lihat Bukti</a>
+                                <?php else : ?>
+                                    Tidak Ada
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php echo !empty($row_pengembalian['nomor_resi_pengembalian']) ? htmlspecialchars($row_pengembalian['nomor_resi_pengembalian']) : '-'; ?>
+                            </td>
+                            <td>
+                                <?php
+                                $status = htmlspecialchars($row_pengembalian['status_pengembalian']);
+                                $badge_class = '';
+                                switch ($status) {
+                                    case 'diajukan':
+                                        $badge_class = 'bg-info'; // Biru muda
+                                        break;
+                                    case 'disetujui_penjual':
+                                        $badge_class = 'bg-success'; // Hijau
+                                        break;
+                                    case 'ditolak_penjual':
+                                        $badge_class = 'bg-danger'; // Merah
+                                        break;
+                                    default:
+                                        $badge_class = 'bg-secondary'; // Abu-abu
+                                        break;
+                                }
+                                echo '<span class="badge ' . $badge_class . '">' . ucfirst(str_replace('_', ' ', $status)) . '</span>';
+                                ?>
+                                <?php if($row_pengembalian['status_pengembalian'] == 'disetujui_penjual'){ ?>
+                                  <form action="" method="post">
+                                    <input type="hidden" name='id_pengembalian' value="<?= $row_pengembalian['pengembalian_id'] ?>">
+                                    <button type="submit" name="kirim" class="badge bg-primary border-0 mt-1">Kirim Barang</button>
+                                  </form>
+                                <?php } ?>
+                            </td>
+                           <td>
+    <?php
+    // Gunakan trim() untuk membersihkan spasi sebelum mengecek empty()
+    $catatan_penolakan = trim($row_pengembalian['catatan_penolakan']);
+
+    if (!empty($catatan_penolakan)) {
+        // Tampilkan tombol "View" jika ada catatan
+        // data-bs-target menunjuk ke ID modal yang unik untuk setiap pengembalian
+        echo '<button class="badge text-white border-0" style="background-color:#8a38e4;" data-bs-toggle="modal" data-bs-target="#modal_view_penolakan' . htmlspecialchars($row_pengembalian['pengembalian_id']) . '">View</button>';
+    } else {
+        echo '-'; // Tampilkan '-' jika catatan kosong
+    }
+    ?>
+</td>
+                            <td><?php echo date('d M Y H:i', strtotime($row_pengembalian['tanggal_pengajuan'])); ?></td>
+                        </tr>
+
+                        <!-- Modal view -->
+<div class="modal fade" id="modal_view_penolakan<?= $row_pengembalian['pengembalian_id'] ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Pengembalian Anda Di Tolak</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="kotak-rating-dashboard modal-body">
+      <h2 class="mb-4 text-center">Berikut Keterangannya</h2>
+      <textarea class="form-control" name="" id="" readonly><?= $row_pengembalian['catatan_penolakan'] ?></textarea>
+     
+    </div>
+  </div>
+</div>
+</div>
+                <?php
+                    }
+                } else {
+                    echo '<tr><td colspan="16" class="text-center">Belum ada pengajuan pengembalian produk.</td></tr>';
+                }
+                ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
 
 <!-- Modal -->
 <div class="modal fade" id="modalUpdate" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -135,20 +303,58 @@ $data=mysqli_fetch_assoc($query);
   </div>
 </div>
 
-<!-- Modal view -->
-<div class="modal fade" id="modal_view" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- Modal return -->
+<div class="modal fade" id="modal_return" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Pesanan Anda Di Tolak</h1>
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Ajukan Pengembalian Produk</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="kotak-rating-dashboard modal-body">
-      <h2 class="mb-4 text-center">Berikut Keterangannya</h2>
-       <input class="form-control mb-5" type="komentar" id="komentar">
+      <div class="modal-body">
+        <form action="" method="post" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label for="return" class="form-label">Kode Pesanan</label>
+            <input type="text" class="form-control" id="return" name="id_pesanan" readonly>
+            <div id="returnHelp" class="form-text">ID Pesanan tidak dapat diubah.</div>
+          </div>
+          <div class="mb-3">
+            <label for="alasan_pengembalian" class="form-label">Alasan Pengembalian</label>
+            <textarea class="form-control" id="alasan_pengembalian" name="alasan" rows="3" placeholder="Jelaskan alasan Anda mengajukan pengembalian produk..." required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="bukti_foto" class="form-label">Bukti Foto</label>
+            <input class="form-control" type="file" id="bukti_foto" name="bukti_foto" accept="image/*">
+            <div id="photoHelp" class="form-text">Unggah foto produk sebagai bukti pengembalian. (Opsional)</div>
+          </div>
+          <!-- <div class="mb-3">
+            <label for="nomor_resi_pengembalian" class="form-label">Nomor Resi Pengembalian</label>
+            <input type="text" class="form-control" id="nomor_resi_pengembalian" name="nomor_resi_pengembalian" placeholder="Masukkan nomor resi jika sudah ada">
+            <div id="resiHelp" class="form-text">Masukkan nomor resi pengiriman pengembalian jika sudah tersedia. (Opsional)</div>
+          </div> -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" type="submit" name="ajukan_pengembalian">Kirim Pengajuan</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+      </div>
+      </form>
     </div>
   </div>
 </div>
+
+<!-- Modal view -->
+<div class="modal fade" id="modal_view" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Pesanan Anda Di Tolak</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="kotak-rating-dashboard modal-body">
+                <h2 class="mb-4 text-center">Berikut Keterangannya</h2>
+                <input class="form-control mb-5" type="text" id="komentar" name="id_komentar"> </div>
+            </div>
+    </div>
 </div>
 
 <!-- modal bayar -->
@@ -243,19 +449,28 @@ $data=mysqli_fetch_assoc($query);
     }
 </script>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    document.body.addEventListener('click', function(event) {
-      if (event.target && event.target.id === 'btn_view') {
-        var pesananId = event.target.getAttribute('data-id');
-        document.getElementById('komentar').value = pesananId;
 
-        var myModalView = new bootstrap.Modal(document.getElementById('modal_view'));
-        myModalView.show();
-      }
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Dapatkan elemen modal 'modal_view'
+        var myModalView = document.getElementById('modal_view');
+
+        // Tambahkan event listener saat modal akan ditampilkan
+        myModalView.addEventListener('show.bs.modal', function (event) {
+            // Dapatkan tombol yang memicu modal
+            var button = event.relatedTarget;
+
+            var pesananId = button.getAttribute('data-keterangan-pesanan');
+
+            // Set nilai ID pesanan ke input dengan id 'komentar' di dalam modal
+            var inputKomentar = myModalView.querySelector('#komentar'); // Dapatkan input #komentar di dalam modal ini
+            inputKomentar.value = pesananId;
+        });
     });
-  });
 </script>
+
+
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   
@@ -297,6 +512,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
         var myModalRating = new bootstrap.Modal(document.getElementById('modal_rating'));
         myModalRating.show();
+      }
+    });
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.body.addEventListener('click', function(event) {
+      if (event.target && event.target.id === 'btn_return') {
+        var pesananId = event.target.getAttribute('data-id');
+        document.getElementById('return').value = pesananId;
+
+        var myModalreturn = new bootstrap.Modal(document.getElementById('modal_return'));
+        myModalreturn.show();
       }
     });
   });
@@ -637,5 +865,132 @@ function upload1()
     move_uploaded_file($tmpname, 'assets/bukti/' . $namafilebaru);
 
     return $namafilebaru;
+}
+
+
+if (isset($_POST['kirim'])) {
+    $id = $_POST['id_pengembalian'];
+    $update = mysqli_query($koneksi, "UPDATE pengembalian set status_pengembalian='barang_dikirim_pembeli' WHERE id='$id'");
+    if ($update) {
+        echo "<script>
+        Swal.fire({title: 'Berhasil',text: 'Pengajuan Pengembalian Barang Sukses Tunggu Sampai Barang samapi ke Penjual.',icon: 'success',confirmButtonText: 'OK'
+        }).then((result) => {if (result.value){
+            window.location = '?page=dashboard';
+            }
+            })</script>";
+    }
+}
+
+// Make sure $koneksi is your database connection variable.
+// This should be defined somewhere before this block, e.g., include('koneksi.php');
+
+if (isset($_POST['ajukan_pengembalian'])) {
+    $id_pesanan = mysqli_real_escape_string($koneksi, $_POST['id_pesanan']); // This maps to 'pesanan_id' in your table
+
+    // Fetch user_id and seller_id from the 'pesanan' table using the order ID
+    $query_pesanan = mysqli_query($koneksi, "SELECT user_id, produk_id FROM pesanan WHERE id = '$id_pesanan'");
+
+    if (!$query_pesanan) {
+        // Handle query error
+        die("Query Error: " . mysqli_error($koneksi));
+    }
+
+    $row = mysqli_fetch_assoc($query_pesanan);
+
+    if ($row) {
+        $user_id = mysqli_real_escape_string($koneksi, $row['user_id']);
+        $produk = mysqli_real_escape_string($koneksi, $row['produk_id']);
+         $query_produk = mysqli_query($koneksi, "SELECT seller_id FROM produk WHERE id = '$produk'");
+$row_seller = mysqli_fetch_assoc($query_produk);
+$seller_id=$row_seller['seller_id'];
+    } else {
+        // Handle case where order ID is not found
+        echo "<script>
+            Swal.fire({title: 'Error',text: 'ID Pesanan tidak ditemukan!',icon: 'error',confirmButtonText: 'OK'})
+            .then((result) => {if (result.value){ window.location = '?page=dashboard'; }});
+            </script>";
+        exit(); // Stop execution
+    }
+
+    // Sanitize and get other input data from the form
+    $alasan = isset($_POST['alasan']) ? mysqli_real_escape_string($koneksi, $_POST['alasan']) : '';
+
+
+    // Handle file upload for bukti_foto
+    $bukti_foto_path = ''; // Default empty
+    if (isset($_FILES['bukti_foto']) && $_FILES['bukti_foto']['error'] === UPLOAD_ERR_OK) {
+        $file_name = $_FILES['bukti_foto']['name'];
+        $file_tmp = $_FILES['bukti_foto']['tmp_name'];
+        $file_ext = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+
+        // Define allowed extensions and upload directory
+        $allowed_extensions = array('jpg', 'jpeg', 'png', 'gif');
+        $upload_dir = 'uploads/return/'; // Make sure this directory exists and is writable
+
+        if (!in_array($file_ext, $allowed_extensions)) {
+            echo "<script>
+                Swal.fire({title: 'Error',text: 'Tipe file tidak diizinkan. Hanya JPG, JPEG, PNG, GIF yang diperbolehkan.',icon: 'error',confirmButtonText: 'OK'})
+                .then((result) => {if (result.value){ window.location = '?page=dashboard'; }});
+                </script>";
+            exit();
+        }
+
+        // Generate a unique file name
+        $new_file_name = uniqid('return_') . '.' . $file_ext;
+        $destination_path = $upload_dir . $new_file_name;
+
+        if (move_uploaded_file($file_tmp, $destination_path)) {
+            $bukti_foto_path = $destination_path; // Save the path to the database
+        } else {
+            echo "<script>
+                Swal.fire({title: 'Error',text: 'Gagal mengunggah bukti foto.',icon: 'error',confirmButtonText: 'OK'})
+                .then((result) => {if (result.value){ window.location = '?page=dashboard'; }});
+                </script>";
+            exit();
+        }
+    }
+
+    // Set initial status_pengembalian to 'diajukan'
+    $status_pengembalian = 'diajukan'; // As per your ENUM definition
+
+    // Get current timestamps
+    $created_at = date('Y-m-d H:i:s');
+    $updated_at = date('Y-m-d H:i:s');
+
+    // Insert data into the 'pengembalian' table
+    $insert_query = "INSERT INTO pengembalian (pesanan_id, user_id, seller_id, alasan, bukti_foto, status_pengembalian, nomor_resi_pengembalian, created_at, updated_at)
+                     VALUES (
+                         '$id_pesanan',
+                         '$user_id',
+                         '$seller_id',
+                         '$alasan',
+                         '$bukti_foto_path',
+                         '$status_pengembalian',
+                         '',
+                         '$created_at',
+                         '$updated_at'
+                     )";
+
+    $insert_result = mysqli_query($koneksi, $insert_query);
+
+    if ($insert_result) {
+      mysqli_query($koneksi, "UPDATE pesanan SET returnn=1 WHERE id='$id_pesanan'");
+        // Success message
+        echo "<script>
+            Swal.fire({title: 'Pengajuan Pengembalian Berhasil!',text: 'Pengajuan Anda telah dikirim untuk diproses.',icon: 'success',confirmButtonText: 'OK'
+            }).then((result) => {if (result.value){
+                window.location = '?page=dashboard'; // Redirect to dashboard or a specific return history page
+            }})
+            </script>";
+    } else {
+        // Error message
+        echo "<script>
+            Swal.fire({title: 'Error',text: 'Gagal mengajukan pengembalian: " . mysqli_error($koneksi) . "',icon: 'error',confirmButtonText: 'OK'
+            }).then((result) => {if (result.value){
+                // Optionally redirect or stay on the page
+                // window.location = '?page=dashboard';
+            }})
+            </script>";
+    }
 }
 ?>

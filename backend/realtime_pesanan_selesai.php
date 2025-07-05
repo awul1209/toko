@@ -21,6 +21,7 @@ $query = "
         p.price,
         p.tgl_pesanan,
         p.status,
+        p.returnn,
         pr.gambar1,
         pr.produk,
         u.email,
@@ -72,11 +73,14 @@ while ($data = mysqli_fetch_assoc($pesanan)) { ?>
         <td>
             <?php if($data['status'] == 'dikirim' || $data['status'] == 'diterima') { ?>
                 <span class="badge bg-primary">Dikirim</span>
-            <?php } elseif($data['status'] == 'selesai') { ?>
+            <?php } elseif($data['status'] == 'selesai' && $data['returnn'] <= 1 ) { ?>
                 <span class="badge bg-success">Selesai</span>
+            <?php } elseif($data['returnn'] == 2) { ?>
+                <span class="badge bg-danger">Dikembalikan</span>
             <?php } ?>
         </td>
         <td>
+           
             <button type="button" class="badge bg-warning border-0 text-white btn-detail" 
                 data-bs-toggle="modal" 
                 data-bs-target="#modalDetailPesanan"

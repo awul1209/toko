@@ -124,7 +124,9 @@ while ($row_pesanan = mysqli_fetch_assoc($pesanan)) {
                                 <input type="hidden" name="id_pesanan" value="<?= $row_pesanan['id_pesanan'] ?>">
                                 <button class="btn btn-warning" name="terima" type="submit"><i class="fas fa-check-circle me-2"></i>Terima Pesanan</button>
                             </form>
-                            <button class="btn btn-outline-danger btn-tolak" data-bs-toggle="modal" data-bs-target="#modal_tolak" data-id="<?= $row_pesanan['id_pesanan'] ?>"><i class="fas fa-times-circle me-2"></i>Tolak</button>
+                            <button class="btn btn-outline-danger btn-tolak" data-bs-toggle="modal" data-bs-target="#modal_tolak" data-id="<?= htmlspecialchars($row_pesanan['id_pesanan']) ?>">
+    <i class="fas fa-times-circle me-2"></i>Tolak
+</button>
                         
                         <?php } else if($row_pesanan['status'] == 'di proses'){ ?>
                             <form action="" method="post" class="d-grid">
